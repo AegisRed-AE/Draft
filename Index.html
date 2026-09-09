@@ -1,0 +1,3109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <title>Runeterra Draft Tool</title>
+
+  <!-- Optional self-hosted Lulo Clean One Bold webfont
+  <style>
+    @font-face {
+      font-family: 'Lulo Clean One Bold';
+      src: url('https://your.cdn/path/LuloCleanOne-Bold.woff2') format('woff2'),
+           url('https://your.cdn/path/LuloCleanOne-Bold.woff') format('woff');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@900&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    /* Typography & base */
+    body {
+      margin: 0;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+      background: #00a6fb;
+      color: #1a1a1a;
+      font-size: 1.15em;
+      text-transform: uppercase;
+    }
+
+    /* Landing step for ruleset selection */
+    #rulesetStep {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    .ruleset-card {
+      background: #fff;
+      border: 2.5px solid #1f1f1f !important;
+      border-radius: 18px;
+      padding: 28px 24px;
+      max-width: 780px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 18px rgba(0,0,0,0.12);
+    }
+    .ruleset-title {
+      color: #1f1f1f;
+      font-family: 'Lulo Clean One Bold', 'Lulo Clean One', 'Bebas Neue', 'Fira Sans Extra Condensed', Arial, sans-serif;
+      font-weight: 700;
+      font-size: 2.2em;
+      letter-spacing: 0.5px;
+      margin: 0 0 12px 0;
+    }
+    .ruleset-subtitle {
+      color: #fff;
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+    .ruleset-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .ruleset-select-btn {
+      padding: 12px 20px;
+      border: 2.5px solid #1f1f1f !important;
+      background: #fff;
+      color: #1f1f1f;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      transition: background 0.15s, color 0.15s, border 0.15s;
+      text-transform: uppercase;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+    }
+    .ruleset-select-btn:hover { background: #00a6fb; color: #1f1f1f; border-color: #1f1f1f !important; }
+
+    .discord-link {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 100;
+    display: none; /* shown when the main app screen is visible */
+    text-decoration: none;
+    padding: 14px 26px;
+    font-size: 1.15em;
+    font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+    font-weight: 900;
+    letter-spacing: 1px;
+    background: #fff;
+    color: #1f1f1f;
+    border: 2.5px solid #1f1f1f !important;
+    border-radius: 5px;
+    transition: background 0.15s, color 0.15s, border 0.15s;
+    text-transform: uppercase;
+  }
+  .discord-link:hover {
+    background: #00a6fb;
+    color: #1f1f1f;
+    border-color: #1f1f1f !important;
+  }
+
+    /* Tournament identity step (separate screen) */
+    #tournamentStep {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    .tournament-card {
+      background: #fff;
+      border: 2.5px solid #1f1f1f !important;
+      border-radius: 18px;
+      padding: 28px 24px;
+      max-width: 680px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 18px rgba(0,0,0,0.12);
+    }
+    .tournament-title {
+      color: #1f1f1f;
+      font-family: 'Lulo Clean One Bold', 'Lulo Clean One', 'Bebas Neue', 'Fira Sans Extra Condensed', Arial, sans-serif;
+      font-weight: 700;
+      font-size: 2.2em;
+      letter-spacing: 0.5px;
+      margin: 0 0 12px 0;
+    }
+    .tournament-form {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+      text-align: left;
+    }
+    .tournament-form label {
+      font-weight: 900;
+      color: #1f1f1f;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .tournament-form input {
+      width: 100%;
+      padding: 10px; /* shortened input height */
+      border-radius: 8px;
+      border: 2.5px solid #1f1f1f !important;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+      font-weight: 900;
+      font-size: 1.0em; /* slightly smaller text */
+      text-transform: none;
+    }
+    .tournament-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .tournament-actions button {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 2.5px solid #1f1f1f !important;
+      background: #fff;
+      color: #1f1f1f;
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      transition: background 0.15s, color 0.15s, border 0.15s;
+      text-transform: uppercase;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+    }
+    .tournament-actions button:hover { background: #00a6fb; color: #1f1f1f; border-color: #1f1f1f !important; }
+
+    /* App container */
+    .container { display: none; flex-direction: row; align-items: flex-start; min-height: 100vh; gap: 24px; padding: 16px; box-sizing: border-box; }
+    .left-panel { flex: 1; display: flex; flex-direction: column; height: 100%; }
+    .card-section { flex: 0 0 auto; }
+    .controls-section { flex: 0 0 auto; margin-top: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; padding-bottom: 80px; }
+
+    /* Fixed button row */
+    .restart-fixed-wrapper { position: fixed; left: 24px; bottom: 24px; z-index: 99; max-width: 60vw; display: flex; flex-direction: row; gap: 8px; align-items: center; pointer-events: none; }
+    .restart-fixed-wrapper button { pointer-events: auto; margin-bottom: 0 !important; }
+    .controls-section > button { display: none; }
+    .controls-section button, button, #copyDeckCodeBtn, #copySeedBtn, .tournament-copy-btn {
+      width: auto; min-width: 0; padding: 14px 26px; font-size: 1.15em;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif; font-weight: 900; letter-spacing: 1px;
+      background: #fff; color: #1f1f1f; border: 2.5px solid #1f1f1f !important; border-radius: 5px;
+      transition: background 0.15s, color 0.15s, border 0.15s; cursor: pointer;
+      text-transform: uppercase;
+    }
+    .controls-section button:hover, button:hover, #copyDeckCodeBtn:hover, #copySeedBtn:hover, .tournament-copy-btn:hover { background: #00a6fb; color: #1f1f1f; border-color: #1f1f1f !important; }
+
+    /* Cards row */
+    .card-group { display: flex; flex-direction: row; gap: 32px; flex-wrap: wrap; justify-content: flex-start; margin-top: 22px; }
+
+    /* Default card tile */
+    .card {
+      display:inline-block; margin:0; padding:32px 18px 24px 18px; border:2.5px solid #1f1f1f !important;
+      cursor:pointer; vertical-align:top; width:310px; min-height: 420px; text-align:center; background: #fff;
+      transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif; font-weight: 900; font-size: 1.32em; border-radius: 24px; box-sizing: border-box;
+    }
+    .card:hover { box-shadow: 0 0 12px 3px #bbf; border-color: #0081b6; background: #e8f7ff; }
+    .card img { width:265px; height:388px; border-radius: 12px; display: block; object-fit: cover; margin: 0 auto; }
+    .card strong { font-size: 1.23em; color: #222; }
+    .card .card-regions { color: #1f1f1f !important; font-size: 1.08em; font-weight: 900; display: block; margin-top: 6px; margin-bottom: 2px; }
+
+    /* Champion highlight */
+    .champion-bg { background: #FACB0F !important; } /* Champion box color */
+    .card.champion-bg:hover { background: #FACB0F !important; border-color: #0081b6; box-shadow: 0 0 12px 3px #bbf; }
+    .sealed-card.champion-bg:hover { background: #FACB0F !important; border-color: #0081b6; box-shadow: 0 0 10px 2px #bbf; }
+
+    /* Headings */
+    h2, .deck > h3, h3 {
+      color: #fff;
+      font-family: 'Lulo Clean One Bold', 'Lulo Clean One', 'Bebas Neue', 'Fira Sans Extra Condensed', Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin: 0.4em 0 0.2em;
+      text-transform: uppercase;
+    }
+    h2 { font-size: 3.2em; }
+    .deck > h3, h3 { font-size: 2.8em; }
+
+    /* Subtitles and status */
+    .runeterra-subtitle { color: #fff; font-weight: 900; }
+    #validationResult { color: #fff; font-weight: 900; }
+    .status-banner {
+      color: #fff; font-weight: 900; text-align: center; padding: 12px 0; text-transform: uppercase;
+    }
+
+    /* Deck code row */
+    #deckCodeRow { margin-top: 12px; display: none; align-items: center; gap: 8px; flex-wrap: wrap; }
+    #deckCodeText { font-size: 1.05em; padding: 8px 12px; min-width: 260px; border: 2.5px solid #1f1f1f !important; border-radius: 5px; font-family: 'Fira Sans Extra Condensed', Arial, sans-serif; font-weight: 900; }
+
+    /* Tournament code rows */
+    #tournamentCodesRow { margin-top: 12px; display: none; flex-direction: column; gap: 8px; }
+    .tournament-code-entry { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .tournament-code-entry input {
+      font-size: 1.05em; padding: 8px 12px; min-width: 260px;
+      border: 2.5px solid #1f1f1f !important; border-radius: 5px;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif; font-weight: 900;
+    }
+
+    /* Seed row */
+    #seedRow { margin-top: 12px; display: none; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+    #seedText, #basicSeedInput {
+      width: 100%;
+      max-width: 520px;
+      min-height: 72px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 2.5px solid #1f1f1f !important;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+      font-weight: 900;
+      font-size: 0.95em;
+      text-transform: none;
+      resize: vertical;
+    }
+
+    /* Deck table */
+    #deckTable { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }
+    #deckTable th, #deckTable td {
+      padding: 12px 12px; border: 2.5px solid #1f1f1f !important; text-align: left;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif; font-weight: 900; font-size: 1.18em; background: #fff; color: #1f1f1f;
+    }
+    #deckTable th { background: #d9d9d9 !important; font-weight: bold; }
+    #deckTable td.center, #deckTable th.center { text-align: center; vertical-align: middle; }
+    #deckTable th.col-region, #deckTable td.col-region, #deckTable th.col-mana, #deckTable td.col-mana, #deckTable th.col-count { width: 1%; white-space: nowrap; text-align: center; }
+    #deckTable img.region-icon { width: 38px; height: 38px; vertical-align: middle; }
+    #deckTableWrapper { max-height: 800px; overflow-y: auto; margin-top: 12px; border-radius: 0px; background: transparent; box-shadow: none; min-width: 400px; }
+
+    /* Mana Curve bar chart wrapper */
+    #manaCurveWrapper {
+      background: #fff;
+      border: 2.5px solid #1f1f1f !important;
+      border-radius: 8px;
+      padding: 8px;
+      margin-top: 12px;
+    }
+    #manaCurveCanvas { width: 100%; height: 220px; display: block; }
+
+    #tournamentUsedCombinations {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .tournament-combination-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tournament-combination-row .deck-label {
+      font-weight: 900;
+      color: #fff;
+      font-size: 0.95em;
+      min-width: 50px;
+      text-transform: uppercase;
+    }
+
+    .tournament-combination-row .region-icon-wrapper {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 2.5px solid #1f1f1f;
+      border-radius: 6px;
+    }
+
+    .tournament-combination-row .region-icon-wrapper img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 3px;
+    }
+
+    .tournament-combination-row .plus-sign {
+      font-weight: 900;
+      color: #fff;
+      font-size: 1.1em;
+    }
+
+    .type-counter {
+      background: #fff;
+      border: 2.5px solid #1f1f1f !important;
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-top: 6px;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+      font-weight: 900;
+      color: #1f1f1f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .type-counter .count {
+      color: #1f1f1f; /* was #fff making it invisible on white background */
+    }
+
+    .type-counters {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .type-counter img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 4px;
+      background: #fff;
+      padding: 2px;
+      border: 2.5px solid #1f1f1f !important;
+    }
+
+    /* Sealed UI pack tiles */
+    .sealed-pack {
+      display:inline-block; padding: 22px 18px; border:2.5px solid #1f1f1f !important; border-radius: 18px; background:#fff; cursor:pointer;
+      width:240px; min-height:140px; text-align:center; font-weight:900; transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+    }
+    .sealed-pack:hover { background:#e8f7ff; border-color:#0081b6; box-shadow:0 0 12px 3px #bbf; }
+    .sealed-pack.opened { background:#d9ffd9; border-color:#0a0; }
+
+    /* All cards opened grid: 7 columns x 12 rows (84 tiles) */
+    .sealed-grid { display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; }
+
+    .sealed-card {
+      display:block; padding:10px; border:2.5px solid #1f1f1f !important; border-radius: 12px; background:#fff; text-align:center; cursor:pointer;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s; font-weight:900; font-size: 1.02em;
+      font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+    }
+    .sealed-card:hover { background:#e8f7ff; border-color:#0081b6; box-shadow:0 0 10px 2px #bbf; }
+    .sealed-card img {
+      width: 100%;
+      height: auto;
+      max-height: none;
+      border-radius: 8px;
+      object-fit: contain;
+      display: block;
+    }
+    .sealed-card .name { display:block; margin-top:6px; color:#222; font-weight: 900; }
+    .sealed-card .rarity { font-size:0.9em; color:#444; }
+
+    /* Selected in sealed: turn card background green */
+    .sealed-card.selected { background:#2ecc71 !important; border-color:#0a0 !important; box-shadow:0 0 10px 2px rgba(0,160,0,0.25); }
+
+    /* Pack reveal layout (7-wide) */
+    .sealed-reveal-controls { display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap:wrap; }
+    .sealed-reveal-grid { display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px;   width: 100%; }
+    .sealed-placeholder {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      aspect-ratio: 265 / 388;
+      border: 2.5px dashed #1f1f1f !important;
+      border-radius: 12px;
+      background: #f3f3f3;
+      font-weight: 900;
+      color: #666;
+      box-sizing: border-box;
+    }
+    /* Tournament registration input sizing overrides */
+.tournament-form {
+  align-items: center;      /* center the field column */
+}
+
+.tournament-form > div {
+  width: 100%;
+  max-width: 340px;         /* narrower fields */
+  margin: 0 auto;           /* center within the card */
+  box-sizing: border-box;
+}
+
+.tournament-form input {
+  padding: 8px 10px;        /* shorter input height */
+  height: 36px;             /* enforce compact height */
+  font-size: 0.95em;        /* slightly smaller text */
+  line-height: 1.2;
+}
+
+.tournament-form label {
+  margin-bottom: 2px;       /* tighter label spacing */
+}
+/* Basic Options step (NEW) */
+#basicOptionsStep {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+}
+.basic-card {
+  background: #fff;
+  border: 2.5px solid #1f1f1f !important;
+  border-radius: 18px;
+  padding: 28px 24px;
+  max-width: 780px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 18px rgba(0,0,0,0.12);
+}
+.basic-row {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.basic-row-title {
+  font-weight: 900;
+  color: #1f1f1f;
+}
+.basic-row-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.basic-btn {
+  padding: 12px 20px;
+  border: 2.5px solid #1f1f1f !important;
+  background: #fff;
+  color: #1f1f1f;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+  text-transform: uppercase;
+  font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+}
+.basic-btn:hover { background: #00a6fb; color: #1f1f1f; border-color: #1f1f1f !important; }
+.basic-btn.active { background: #d9d9d9; }
+.basic-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+/* Region counters UI */
+.region-counters {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)); /* 5 per row */
+  gap: 8px;
+  margin-top: 10px;
+}
+.region-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 2.5px solid #1f1f1f !important;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+  font-weight: 900;
+  color: #1f1f1f;
+  justify-self: start;
+}
+.region-counter img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: #fff;
+  padding: 2px;
+  border: 2.5px solid #1f1f1f !important;
+}
+.region-counter .count {
+  color: #1f1f1f;
+}
+  </style>
+</head>
+<body>
+
+  <a
+    id="discordLink"
+    class="discord-link"
+    href="https://discord.gg/pjK4CujAQH"
+    target="_blank"
+    rel="noopener"
+  >
+    Join the Discord
+  </a>
+
+  <!-- Landing ruleset selection -->
+  <div id="rulesetStep">
+    <div class="ruleset-card">
+      <div class="ruleset-title">CHOOSE RULESET</div>
+      <div class="ruleset-subtitle">SELECT A RULESET TO BEGIN YOUR DRAFT</div>
+      <div class="ruleset-buttons">
+        <button class="ruleset-select-btn" onclick="selectRuleset('BASIC')">BASIC</button>
+        <button class="ruleset-select-btn" onclick="selectRuleset('CHAOS')">CHAOS</button>
+        <button class="ruleset-select-btn" onclick="selectRuleset('SEALED')">SEALED</button>
+        <button class="ruleset-select-btn" onclick="selectRuleset('FEATURED')">FEATURED</button>
+        <button class="ruleset-select-btn" onclick="selectRuleset('TOURNAMENT')">TOURNAMENT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Basic options screen (NEW) -->
+<div id="basicOptionsStep">
+  <div class="basic-card">
+    <div class="tournament-title">BASIC DRAFT OPTIONS</div>
+
+    <div class="basic-row">
+      <div class="basic-row-title">FORMAT</div>
+      <div class="basic-row-buttons">
+        <button id="basicFormatStandardBtn" class="basic-btn" onclick="setBasicOption('format','standard')">Standard</button>
+        <button id="basicFormatEternalBtn" class="basic-btn active" onclick="setBasicOption('format','eternal')">Eternal</button>
+      </div>
+    </div>
+
+    <div class="basic-row">
+      <div class="basic-row-title">CARDS PER PICK</div>
+      <div class="basic-row-buttons">
+        <button id="basicCardsOneBtn" class="basic-btn active" onclick="setBasicOption('cardsPerPick','one')">1 at a time</button>
+        <button id="basicCardsTwoBtn" class="basic-btn" onclick="setBasicOption('cardsPerPick','two')">2 at a time</button>
+        <button id="basicCardsThreeBtn" class="basic-btn" onclick="setBasicOption('cardsPerPick','three')">3 at a time</button>
+      </div>
+    </div>
+
+    <div class="basic-row">
+      <div class="basic-row-title">BUCKET SIZE</div>
+      <div class="basic-row-buttons">
+        <button id="basicBucket1Btn" class="basic-btn active" onclick="setBasicOption('bucketSize',1)">1x</button>
+        <button id="basicBucket2Btn" class="basic-btn" onclick="setBasicOption('bucketSize',2)">2x</button>
+        <button id="basicBucket3Btn" class="basic-btn" onclick="setBasicOption('bucketSize',3)">3x</button>
+      </div>
+    </div>
+
+    <div class="basic-row">
+      <div class="basic-row-title">DRAFT SEED (OPTIONAL)</div>
+      <textarea id="basicSeedInput" placeholder="Paste draft seed JSON to reproduce draft options"></textarea>
+      <div class="basic-row-buttons">
+        <button class="basic-btn" onclick="clearSeedInput()">Clear Seed</button>
+      </div>
+      <div id="basicSeedError" style="margin-top:4px; color:#b00020; font-weight:900;"></div>
+    </div>
+
+    <div class="basic-actions">
+      <button class="basic-btn" onclick="startBasicDraft()">Start Draft</button>
+      <button class="basic-btn" onclick="cancelBasic()">Back</button>
+    </div>
+    <div id="basicOptionsError" style="margin-top:10px; color:#b00020; font-weight:900;"></div>
+  </div>
+</div>
+
+  <!-- Tournament identity screen -->
+  <div id="tournamentStep">
+    <div class="tournament-card">
+      <div class="tournament-title">TOURNAMENT REGISTRATION</div>
+      <div style="font-weight:900; color:#1f1f1f; margin-bottom: 10px;">ENTER YOUR DETAILS TO BEGIN</div>
+      <div class="tournament-form">
+        <div>
+          <label for="tournamentUsername">USERNAME</label>
+          <input type="text" id="tournamentUsername" placeholder="e.g. AegisRed" required>
+        </div>
+        <div>
+          <label for="tournamentRiotId">RIOT ID</label>
+          <input type="text" id="tournamentRiotId" placeholder="e.g. Summoner#NA1" required>
+        </div>
+        <div>
+          <label for="tournamentDiscordId">DISCORD ID</label>
+          <input type="text" id="tournamentDiscordId" placeholder="e.g. aegisred" required>
+        </div>
+        <div>
+          <label for="tournamentPassword">PASSWORD</label>
+          <input type="password" id="tournamentPassword" placeholder="password" required>
+        </div>
+      </div>
+      <div class="tournament-actions">
+        <button onclick="startTournamentDraft()">Start Draft</button>
+        <button onclick="cancelTournament()">Back</button>
+      </div>
+      <div id="tournamentError" style="margin-top:10px; color:#b00020; font-weight:900;"></div>
+    </div>
+  </div>
+
+  <!-- App UI -->
+  <div id="appContainer" class="container" style="display:none;">
+    <div class="left-panel">
+      <h2>Runeterra Draft Tool</h2>
+      <div class="runeterra-subtitle" id="pickNum"></div>
+      <div class="runeterra-subtitle" id="pickCounter"></div>
+
+      <div id="typeCounters" class="type-counters"></div>
+
+      <div class="card-section">
+        <div id="cards" class="card-group"></div>
+      </div>
+
+      <div class="controls-section">
+        <!-- Sealed-only controls -->
+        <button id="finalizeSealedBtn" style="display:none" onclick="finalizeSealedDeck()">FINALIZE DECK</button>
+        <button id="openAllPacksBtn" style="display:none" onclick="openAllSealedPacks()">OPEN ALL PACKS</button>
+
+        <button id="generateSeedBtn" style="display:none" onclick="generateDraftSeed()">GENERATE SEED</button>
+
+        <div id="validationResult" style="min-height:1.5em; margin-top:3px;"></div>
+        <div id="deckCodeRow">
+          <input type="text" id="deckCodeText" readonly>
+          <button id="copyDeckCodeBtn" onclick="copyDeckCode()">COPY DECK CODE</button>
+        </div>
+
+        <div id="tournamentCodesRow">
+          <div class="tournament-code-entry">
+            <input type="text" id="tournamentDeckCode1" readonly>
+            <button class="tournament-copy-btn" onclick="copyTournamentDeckCode(0)">COPY DECK 1</button>
+          </div>
+          <div class="tournament-code-entry">
+            <input type="text" id="tournamentDeckCode2" readonly>
+            <button class="tournament-copy-btn" onclick="copyTournamentDeckCode(1)">COPY DECK 2</button>
+          </div>
+          <div class="tournament-code-entry">
+            <input type="text" id="tournamentDeckCode3" readonly>
+            <button class="tournament-copy-btn" onclick="copyTournamentDeckCode(2)">COPY DECK 3</button>
+          </div>
+        </div>
+
+        <div id="seedRow">
+          <textarea id="seedText" readonly></textarea>
+          <button id="copySeedBtn" onclick="copySeed()">COPY SEED</button>
+        </div>
+      </div>
+
+      <div class="restart-fixed-wrapper">
+        <button id="restartBtn" onclick="restart()">RESTART DRAFT</button>
+        <button id="changeRulesetBtn" onclick="changeRuleset()">CHANGE RULESET</button>
+      </div>
+    </div>
+
+      <div class="sidebar">
+        <div id="tournamentUsedCombinations" style="display: none; margin-bottom: 16px;"></div>
+        <div class="curve">
+          <h3>Mana Curve:</h3>
+          <div id="manaCurveWrapper">
+            <canvas id="manaCurveCanvas"></canvas>
+          </div>
+        </div>
+
+      <div class="regions">
+        <h3>Regions:</h3>
+        <div id="regionCounters" class="region-counters"></div>
+      </div>
+
+      <div class="deck">
+        <h3>Your Deck:</h3>
+        <div id="deckTableWrapper">
+          <table id="deckTable">
+            <thead>
+              <tr>
+                <th class="center col-region">Region</th>
+                <th class="center col-mana">Mana</th>
+                <th>Name</th>
+                <th class="center col-count">Count</th>
+              </tr>
+            </thead>
+            <tbody id="deckList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let latestDeckCode = '';
+    let cardPool = [];
+    let deck = [];
+    let pickNumber = 1;
+    let champ1 = null;
+    let champ2 = null;
+    let regionLock = [null, null];
+    let ruleset = 'BASIC'; // BASIC | CHAOS | SEALED | FEATURED | TOURNAMENT
+    let poolLoaded = false;
+    let appReady = false;
+
+    // Draft seed state (BASIC only)
+    let draftSeedActive = false;
+    let draftSeedValue = null;
+    let draftSeedInitial = null;
+    let draftSeedInfo = null;
+    let draftRng = null;
+
+    // Tournament identity
+    let tUsername = '';
+    let tRiotId = '';
+    let tDiscordId = '';
+    let tStarted = false;
+
+    // Configurable tournament password (edit this value to change)
+    // Default placeholder: "admin"
+    const TOURNAMENT_PASSWORD = 'Hermes';
+
+    // Tournament ruleset + multi-deck submission
+    const TOURNAMENT_RULESET = 'BASIC'; // BASIC | CHAOS | SEALED | FEATURED
+    const TOURNAMENT_DECK_TARGET = 3;
+    let tournamentDeckCodes = [];
+    let tournamentUsedChampionCodes = new Set();
+    let tournamentUsedRegionCombinations = []; // Array of normalized region pairs like "Freljord|Noxus"
+
+    function getEffectiveRuleset() {
+      return ruleset === 'TOURNAMENT' ? TOURNAMENT_RULESET : ruleset;
+    }
+    function isTournamentMode() {
+      return ruleset === 'TOURNAMENT';
+    }
+    function isTournamentChampionLocked(card) {
+      return isTournamentMode() && card?.rarity === 'Champion' && tournamentUsedChampionCodes.has(card.cardCode);
+    } 
+    // Tournament region combination tracking
+    function normalizeRegionPair(r1, r2) {
+      // Normalize so that Freljord+Noxus === Noxus+Freljord
+      const pair = [r1, r2].sort();
+      return pair.join('|');
+    }
+
+    function isTournamentRegionPairUsed(r1, r2) {
+      if (!isTournamentMode()) return false;
+      const normalized = normalizeRegionPair(r1, r2);
+      return tournamentUsedRegionCombinations.includes(normalized);
+    }
+
+    function addUsedRegionCombination(r1, r2) {
+      const normalized = normalizeRegionPair(r1, r2);
+      if (!tournamentUsedRegionCombinations.includes(normalized)) {
+        tournamentUsedRegionCombinations.push(normalized);
+      }
+    }
+
+    function getUsedRegionCombinationsDisplay() {
+      if (tournamentUsedRegionCombinations.length === 0) return '';
+      
+      const display = tournamentUsedRegionCombinations
+        .map((pair, index) => {
+          const deckNum = index + 1;
+          const [r1, r2] = pair.split('|');
+          return `DECK ${deckNum}: ${r1} + ${r2}`;
+        })
+        .join(' | ');
+      
+      return `USED COMBINATIONS: ${display}`;
+    }
+
+      function updateTournamentUsedRegionDisplay() {
+      const container = document.getElementById('tournamentUsedCombinations');
+      if (!container) return;
+
+      if (!isTournamentMode() || tournamentUsedRegionCombinations.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.innerHTML = '';
+      container.style.display = 'flex';
+
+      tournamentUsedRegionCombinations.forEach((pair, index) => {
+        const deckNum = index + 1;
+        const [r1, r2] = pair.split('|');
+        
+        const iconUrl1 = REGION_ICONS[r1] || "";
+        const iconUrl2 = REGION_ICONS[r2] || "";
+
+        const img1Html = iconUrl1 
+          ? `<img src="${iconUrl1}" alt="${r1}" title="${r1}" onerror="this.onerror=null;this.style.display='none';">`
+          : `<span style="color:#999;font-size:10px;">${r1.substring(0,2)}</span>`;
+        const img2Html = iconUrl2 
+          ? `<img src="${iconUrl2}" alt="${r2}" title="${r2}" onerror="this.onerror=null;this.style.display='none';">`
+          : `<span style="color:#999;font-size:10px;">${r2.substring(0,2)}</span>`;
+
+        const row = document.createElement('div');
+        row.className = 'tournament-combination-row';
+        row.innerHTML = `
+          <div class="deck-label">Deck ${deckNum}</div>
+          <div class="region-icon-wrapper">${img1Html}</div>
+          <div class="plus-sign">+</div>
+          <div class="region-icon-wrapper">${img2Html}</div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // Basic options (NEW)
+    let basicFormatMode = 'eternal';        // 'standard' | 'eternal'
+    let basicCardsPerPickMode = 'one';      // 'one' | 'custom'
+    let basicBucketSize = 1;                // 1 | 2 | 3
+
+    let preferredRegionPair = null;
+
+    function mulberry32(a) {
+      return function() {
+        let t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function rand() {
+      if (draftSeedActive && ruleset === 'BASIC' && typeof draftRng === 'function') {
+        return draftRng();
+      }
+      return Math.random();
+    }
+
+    function makeRandomSeed() {
+      return (Math.floor(Math.random() * 0xFFFFFFFF) ^ Date.now()) >>> 0;
+    }
+
+    function updateRestartVisibility() {
+      const rbtn = document.getElementById('restartBtn');
+      if (!rbtn) return;
+      if (ruleset === 'TOURNAMENT') {
+        rbtn.style.display = 'none';
+        return;
+      }
+      rbtn.style.display = '';
+    }
+
+    function setDraftSeed(seed) {
+      draftSeedValue = (seed >>> 0);
+      draftRng = mulberry32(draftSeedValue);
+      draftSeedActive = true;
+      if (draftSeedInitial === null || draftSeedInitial === undefined) {
+        draftSeedInitial = draftSeedValue;
+      }
+      updateRestartVisibility();
+    }
+
+    function clearDraftSeed() {
+      draftSeedActive = false;
+      draftSeedValue = null;
+      draftSeedInitial = null;
+      draftSeedInfo = null;
+      draftRng = null;
+      updateRestartVisibility();
+    }
+
+    function clearSeedInput() {
+      const input = document.getElementById('basicSeedInput');
+      const err = document.getElementById('basicSeedError');
+      if (input) input.value = '';
+      if (err) err.textContent = '';
+    }
+
+    function applyDraftSeedFromInput() {
+      const input = document.getElementById('basicSeedInput');
+      const err = document.getElementById('basicSeedError');
+      if (err) err.textContent = '';
+      if (!input) return false;
+
+      const raw = (input.value || '').trim();
+      if (!raw) return false;
+
+      try {
+        const data = JSON.parse(raw);
+        if (!data || typeof data.seed !== 'number') {
+          throw new Error('Seed JSON must include a numeric "seed" field.');
+        }
+
+        if (data.format) setBasicOption('format', data.format);
+        if (data.cardsPerPick) setBasicOption('cardsPerPick', data.cardsPerPick);
+        if (typeof data.bucketSize === 'number') setBasicOption('bucketSize', data.bucketSize);
+
+        setDraftSeed(data.seed);
+        draftSeedInitial = draftSeedValue;
+        draftSeedInfo = {
+          v: 1,
+          seed: draftSeedInitial,
+          format: basicFormatMode,
+          cardsPerPick: basicCardsPerPickMode,
+          bucketSize: basicBucketSize
+        };
+        return true;
+      } catch (e) {
+        if (err) err.textContent = e.message || 'INVALID SEED JSON.';
+        return false;
+      }
+    }
+
+    function generateDraftSeed() {
+      if (!draftSeedActive) {
+        setDraftSeed(makeRandomSeed());
+      }
+
+      const seedForOutput = draftSeedInitial ?? draftSeedValue;
+      if (seedForOutput === null || seedForOutput === undefined) {
+        setStatus("SEED NOT AVAILABLE");
+        return;
+      }
+
+      draftSeedInfo = {
+        v: 1,
+        seed: seedForOutput,
+        format: basicFormatMode,
+        cardsPerPick: basicCardsPerPickMode,
+        bucketSize: basicBucketSize
+      };
+      const seedText = document.getElementById('seedText');
+      const seedRow = document.getElementById('seedRow');
+      if (seedText) seedText.value = JSON.stringify(draftSeedInfo);
+      if (seedRow) seedRow.style.display = 'flex';
+      setStatus("SEED GENERATED");
+    }
+
+    async function copySeed() {
+      const seedText = document.getElementById('seedText');
+      const text = (seedText?.value || '').trim();
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        setStatus("SEED COPIED TO CLIPBOARD");
+      } catch (e) {
+        try {
+          seedText.select();
+          document.execCommand('copy');
+          window.getSelection().removeAllRanges?.();
+          setStatus("SEED COPIED TO CLIPBOARD");
+        } catch (e2) {
+          setStatus("UNABLE TO COPY SEED. PLEASE SELECT AND COPY MANUALLY");
+        }
+      }
+    }
+
+    function showTournamentCodes(codes) {
+      const row = document.getElementById('tournamentCodesRow');
+      const deckCodeRow = document.getElementById('deckCodeRow');
+      const fields = [
+        document.getElementById('tournamentDeckCode1'),
+        document.getElementById('tournamentDeckCode2'),
+        document.getElementById('tournamentDeckCode3')
+      ];
+      if (deckCodeRow) deckCodeRow.style.display = 'none';
+      if (!row) return;
+      fields.forEach((field, i) => {
+        if (field) field.value = codes[i] || '';
+      });
+      row.style.display = 'flex';
+    }
+
+    async function copyTournamentDeckCode(index) {
+      const field = document.getElementById(`tournamentDeckCode${index + 1}`);
+      const text = (field?.value || '').trim();
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        setStatus(`DECK ${index + 1} CODE COPIED TO CLIPBOARD`);
+      } catch (e) {
+        try {
+          field.select();
+          document.execCommand('copy');
+          window.getSelection().removeAllRanges?.();
+          setStatus(`DECK ${index + 1} CODE COPIED TO CLIPBOARD`);
+        } catch (e2) {
+          setStatus("UNABLE TO COPY. PLEASE SELECT AND COPY MANUALLY");
+        }
+      }
+    }
+
+    /**
+     * Set preferredRegionPair = [rA, rB] when:
+     * - One champ is dual-region non-Runeterra
+     * - The other champ is mono-region non-Runeterra
+     * - The mono region is contained in the dual champ's regions
+     * Otherwise leaves it null.
+     */
+    function updatePreferredRegionPair(c1, c2) {
+      preferredRegionPair = null;
+
+      // Ignore Runeterra champs for this rule
+      if (isRuneterraChampion(c1) || isRuneterraChampion(c2)) return;
+
+      // Identify dual and mono champs
+      const dual = isDualRegionNonRT(c1) ? c1 : (isDualRegionNonRT(c2) ? c2 : null);
+      const mono = isMonoRegionNonRT(c1) ? c1 : (isMonoRegionNonRT(c2) ? c2 : null);
+
+      if (!dual || !mono) return;
+      if (!Array.isArray(dual.regions) || dual.regions.length !== 2) return;
+
+      const monoRegion = mono.regions[0];
+      if (dual.regions.includes(monoRegion)) {
+        preferredRegionPair = [dual.regions[0], dual.regions[1]];
+      }
+    }
+
+    function isCardStandard(card) {
+      if (!card) return false;
+      const fmt = card.format;
+
+      // If JSON provides an array (preferred)
+      if (Array.isArray(fmt)) {
+        return fmt.some(f => String(f).toLowerCase() === 'standard');
+      }
+
+      // If JSON provides a single string (fallback from data, not inference)
+      if (typeof fmt === 'string') {
+        return fmt.toLowerCase() === 'standard';
+      }
+
+      // No format info => treat as non-Standard
+      return false;
+    }
+
+    function setBasicOption(key, value) {
+      if (key === 'format') basicFormatMode = value;               // 'standard'|'eternal'
+      if (key === 'cardsPerPick') basicCardsPerPickMode = value;   // 'one'|'two'|'three'
+      if (key === 'bucketSize') basicBucketSize = Number(value);   // 1|2|3
+
+      const map = {
+        format: { standard: 'basicFormatStandardBtn', eternal: 'basicFormatEternalBtn' },
+        cardsPerPick: { one: 'basicCardsOneBtn', two: 'basicCardsTwoBtn', three: 'basicCardsThreeBtn' },
+        bucketSize: { 1: 'basicBucket1Btn', 2: 'basicBucket2Btn', 3: 'basicBucket3Btn' }
+      };
+
+      // Toggle active classes
+      Object.values(map.format).forEach(id => document.getElementById(id)?.classList.remove('active'));
+      document.getElementById(map.format[basicFormatMode])?.classList.add('active');
+
+      Object.values(map.cardsPerPick).forEach(id => document.getElementById(id)?.classList.remove('active'));
+      document.getElementById(map.cardsPerPick[basicCardsPerPickMode])?.classList.add('active');
+
+      Object.values(map.bucketSize).forEach(id => document.getElementById(id)?.classList.remove('active'));
+      document.getElementById(map.bucketSize[basicBucketSize])?.classList.add('active');
+    }
+
+    function startBasicDraft() {
+      const err = document.getElementById('basicOptionsError');
+      if (err) err.textContent = '';
+
+      const seedApplied = applyDraftSeedFromInput();
+      if (!seedApplied) {
+        clearDraftSeed();
+        setDraftSeed(makeRandomSeed());
+        draftSeedInfo = {
+          v: 1,
+          seed: draftSeedInitial ?? draftSeedValue,
+          format: basicFormatMode,
+          cardsPerPick: basicCardsPerPickMode,
+          bucketSize: basicBucketSize
+        };
+      }
+
+      document.getElementById('basicOptionsStep').style.display = 'none';
+      document.getElementById('appContainer').style.display = 'flex';
+
+      // Show restart/change ruleset in basic flow
+      const rbtn = document.getElementById('restartBtn');
+      const changeBtn = document.getElementById('changeRulesetBtn');
+      if (rbtn) rbtn.style.display = '';
+      if (changeBtn) changeBtn.style.display = '';
+      updateRestartVisibility();
+
+      restart();
+      if (poolLoaded) {
+        getNextDraft();
+      } else {
+        const cardsDiv = document.getElementById('cards');
+        if (cardsDiv) cardsDiv.innerHTML = '<div class="status-banner">LOADING…</div>';
+      }
+      updateRegionCounters();
+    }
+
+    function cancelBasic() {
+      document.getElementById('basicOptionsStep').style.display = 'none';
+      document.getElementById('rulesetStep').style.display = 'flex';
+      ruleset = 'BASIC';
+      clearDraftSeed();
+      updateRestartVisibility();
+
+      const discordLink = document.getElementById('discordLink');
+      if (discordLink) discordLink.style.display = 'inline-block';
+    }
+
+    function hideSeedUI() {
+      const seedRow = document.getElementById('seedRow');
+      const seedText = document.getElementById('seedText');
+      const genSeedBtn = document.getElementById('generateSeedBtn');
+      if (seedRow) seedRow.style.display = 'none';
+      if (seedText) seedText.value = '';
+      if (genSeedBtn) genSeedBtn.style.display = 'none';
+    }
+
+    // Sealed state with per-instance selection persistence
+    let sealedPacks = [];                 // 6 packs, each 14 clones
+    let sealedOpened = [];                // boolean per pack
+    let sealedPackRevealOrder = [];       // per-pack reveal order arrays (UIDs)
+    let sealedRevealCounts = [];          // per-pack revealed counts
+    let sealedPool = [];                  // flattened 84 clones
+    let sealedSelectedUIDs = new Set();   // selected instance UIDs
+    let sealedUIDToClone = {};            // uid => clone
+    let sealedNextUID = 1;
+    let sealedRevealedFlags = [];
+
+    // Sealed view state
+    let viewingPackIndex = null;          // pack index when viewing specific pack
+
+    const REGION_ICONS = {
+      "Demacia": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/DE.png",
+      "Freljord": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/FR.png",
+      "Ionia": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/IO.png",
+      "Piltover & Zaun": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/PZ.png",
+      "Shadow Isles": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/SI.png",
+      "Noxus": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/NX.png",
+      "Bilgewater": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/BW.png",
+      "Shurima": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/SH.png",
+      "Targon": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/TA.png",
+      "Bandle City": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/BC.png",
+      "Runeterra": "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/Regions/RU.png"
+    };
+
+    const TYPE_ICONS = {
+      // Replace these URLs with your actual assets (or leave "" to use text fallback)
+      Champion: "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/icon-champion.png",
+      Unit:      "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/icon-unit.png",
+      Spell:     "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/icon-spell.png",
+      Landmark:  "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/icon-landmark.png",
+      Equipment: "https://raw.githubusercontent.com/hivar94/AegisEsports/refs/heads/main/LOR/Assets/icon-equipment.png"
+     };
+
+    const FEATURED_PAIRS = [
+      { codeA: "01DE012", codeB: "01NX042", label: "Forbidden Love" },
+      { codeA: "01DE022", codeB: "05SI009", label: "Sentinel Couple" },
+      { codeA: "01DE042", codeB: "01PZ036", label: "Unrequited Crush" },
+      { codeA: "01DE045", codeB: "06RU008", label: "Worthy opponents" },
+      { codeA: "01FR009", codeB: "07RU015", label: "A dreamlike friendship" },
+      { codeA: "01FR024", codeB: "05BC161", label: "Ancient Beasts" },
+      { codeA: "01FR038", codeB: "01FR039", label: "The Original Lovers" },
+      { codeA: "01IO009", codeB: "01IO032", label: "Adopted Brothers" },
+      { codeA: "01IO015", codeB: "03NX007", label: "Wind Blade Siblings" },
+      { codeA: "01IO041", codeB: "04IO005", label: "Defenders of Ionia" },
+      { codeA: "01NX006", codeB: "04NX004", label: "The Black Rose" },
+      { codeA: "01NX020", codeB: "01NX020", label: "League of Draven" },
+      { codeA: "01NX038", codeB: "02NX007", label: "Trifarix Kings" },
+      { codeA: "01PZ008", codeB: "03IO002", label: "Classic Yordle Friends" },
+      { codeA: "01PZ040", codeB: "04PZ001", label: "In Another Timeline..." },
+      { codeA: "01PZ056", codeB: "05BC163", label: "Yordle Inventors" },
+      { codeA: "01SI030", codeB: "01SI042", label: "Unending Vengeance" },
+      { codeA: "01SI052", codeB: "04SI005", label: "Harbingers of Death" },
+      { codeA: "01SI053", codeB: "05IO004", label: "Femme Fatales" },
+      { codeA: "02BW022", codeB: "02BW026", label: "Pirates" },
+      { codeA: "02BW032", codeB: "06BW006", label: "Salty Ex-lovers" },
+      { codeA: "02BW046", codeB: "05BW005", label: "Fish are Friends..." },
+      { codeA: "02BW053", codeB: "03BW004", label: "Titans of the Deep" },
+      { codeA: "02DE006", codeB: "04BW005", label: "Dashers" },
+      { codeA: "02FR002", codeB: "05FR013", label: "Daddy Daughter Duo" },
+      { codeA: "02IO006", codeB: "06IO008", label: "Enough eyes for Both" },
+      { codeA: "02PZ008", codeB: "05PZ006", label: "Cupcake" },
+      { codeA: "02SI008", codeB: "04MT008", label: "Titans of Nature" },
+      { codeA: "03DE011", codeB: "04DE008", label: "More than it Seems" },
+      { codeA: "03FR006", codeB: "04FR005", label: "Need some TLC" },
+      { codeA: "03MT009", codeB: "03MT087", label: "Good Doggo" },
+      { codeA: "03MT054", codeB: "03MT056", label: "Good for Them..." },
+      { codeA: "03MT055", codeB: "03MT058", label: "Protectors of Targon" },
+      { codeA: "03MT217", codeB: "08RU014", label: "The Leftovers" },
+      { codeA: "03PZ003", codeB: "05PZ022", label: "We All Know..." },
+      { codeA: "04SH003", codeB: "05SH014", label: "Ascended Friends" },
+      { codeA: "04SH019", codeB: "06SH009", label: "Void Queens" },
+      { codeA: "04SH020", codeB: "04SH073", label: "Shuriman Queens" },
+      { codeA: "04SH039", codeB: "04SH130", label: "Shuriman Revivers" },
+      { codeA: "04SH047", codeB: "04SH067", label: "Ascended Brothers" },
+      { codeA: "04SI055", codeB: "06SI012", label: "Memories of Isolde" },
+      { codeA: "05BC029", codeB: "06BC015", label: "Old Cat Lady" },
+      { codeA: "05BC041", codeB: "09BC001", label: "Optimism and Pessimism" },
+      { codeA: "05BC058", codeB: "05NX001", label: "David and Goliath" },
+      { codeA: "05BC088", codeB: "05BC133", label: "A Mecha in Her Name" },
+      { codeA: "05BC093", codeB: "08SI042", label: "An Evil Admirer" },
+      { codeA: "05DE009", codeB: "09DE034", label: "Defenders of Demacia" },
+      { codeA: "05MT003", codeB: "06RU026", label: "Darkin War Leaders" },
+      { codeA: "06DE021", codeB: "06RU025", label: "Neverending Hunt" },
+      { codeA: "06FR011", codeB: "08FR001", label: "Titanic Brothers" },
+      { codeA: "06MT008", codeB: "08MT003", label: "Mihira's Daughters" },
+      { codeA: "06NX012", codeB: "08BW008", label: "Fire and Water" },
+      { codeA: "06PZ021", codeB: "08PZ001", label: "Icons of P&Z" },
+      { codeA: "06RU001", codeB: "06RU006", label: "Runeterran Wanderers" },
+      { codeA: "06RU002", codeB: "07NX007", label: "Seasoned Killers" },
+      { codeA: "06RU005", codeB: "06RU009", label: "In Me Are Two Men..." },
+      { codeA: "07BW002", codeB: "07IO011", label: "Brawl Bros" },
+      { codeA: "07RU012", codeB: "07SH013", label: "Historians Say They Were Good Friends" },
+      { codeA: "09IO052", codeB: "03SI005", label: "Dreams and Nightmares" }
+    ];
+
+    function getCardByCode(code) {
+      if (!code || !Array.isArray(cardPool)) return null;
+      const upper = String(code).toUpperCase();
+      return cardPool.find(c => String(c?.cardCode || "").toUpperCase() === upper) || null;
+    }
+
+    function getFeaturedPairChoices() {
+      const available = FEATURED_PAIRS.filter(p => getCardByCode(p.codeA) && getCardByCode(p.codeB));
+      const shuffled = shuffle(available);
+      return shuffled.slice(0, 3);
+    }
+
+    function renderFeaturedPairs(pairs) {
+      const cardsDiv = document.getElementById('cards');
+      cardsDiv.className = 'card-group';
+      cardsDiv.innerHTML = '';
+
+      pairs.forEach(pair => {
+        const c1 = getCardByCode(pair.codeA);
+        const c2 = getCardByCode(pair.codeB);
+        if (!c1 || !c2) return;
+
+        const tile = document.createElement('div');
+        tile.className = 'card champion-bg';
+        tile.innerHTML = `
+          <div style="font-size:1.1em; margin-bottom:12px; color:#1f1f1f;">${pair.label}</div>
+          <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <div style="display:inline-block;">
+              <img src="${c1.imageUrl}" alt="${c1.name}" style="width:140px;height:auto;border-radius:8px;">
+              <div style="margin-top:6px;">${c1.name}</div>
+            </div>
+            <div style="display:inline-block;">
+              <img src="${c2.imageUrl}" alt="${c2.name}" style="width:140px;height:auto;border-radius:8px;">
+              <div style="margin-top:6px;">${c2.name}</div>
+            </div>
+          </div>
+        `;
+        tile.onclick = () => pickFeaturedPair(pair);
+        cardsDiv.appendChild(tile);
+      });
+    }
+
+    function pickFeaturedPair(pair) {
+      const c1 = getCardByCode(pair.codeA);
+      const c2 = getCardByCode(pair.codeB);
+      if (!c1 || !c2) {
+        setStatus("PAIR NOT AVAILABLE. RESTART DRAFT.");
+        return;
+      }
+
+      champ1 = c1;
+      champ2 = c2;
+
+      updatePreferredRegionPair(champ1, champ2);
+
+      regionLock = updateRegionLock(regionLock, 1, c1, champ1, champ2);
+      regionLock = updateRegionLock(regionLock, 2, c2, champ1, champ2);
+
+      if (c1.cardCode === c2.cardCode) {
+        for (let i = 0; i < 3; i++) deck.push(c1);
+      } else {
+        for (let i = 0; i < 2; i++) deck.push(c1);
+        for (let i = 0; i < 2; i++) deck.push(c2);
+      }
+
+      pickNumber = 3;
+
+      renderDeck();
+      maybeGenerateDeckCode();
+      getNextDraft();
+    }
+
+    function setStatus(msg) {
+      const el = document.getElementById('validationResult');
+      if (el) el.textContent = msg || '';
+    }
+    function isBasicLike() {
+      const effective = getEffectiveRuleset();
+      return effective === 'BASIC' || effective === 'FEATURED';
+    }
+    function getRulesetBucketSize() {
+      const effective = getEffectiveRuleset();
+      if (effective === 'FEATURED') return 2;
+      if (effective === 'BASIC') return basicBucketSize;
+      return 1;
+    }
+
+    function selectRuleset(mode) {
+      if (!['BASIC','CHAOS','SEALED','FEATURED','TOURNAMENT'].includes(mode)) return;
+      ruleset = mode;
+      appReady = true;
+
+      // Hide all steps first
+      document.getElementById('rulesetStep').style.display = 'none';
+      document.getElementById('tournamentStep').style.display = 'none';
+      document.getElementById('appContainer').style.display = 'none';
+
+      const discordLink = document.getElementById('discordLink');
+      if (discordLink) discordLink.style.display = 'none';
+
+      // Reset shared UI
+      document.getElementById('finalizeSealedBtn').style.display = 'none';
+      document.getElementById('openAllPacksBtn').style.display = 'none';
+      setStatus('');
+      document.getElementById('deckCodeRow').style.display = 'none';
+      document.getElementById('deckCodeText').value = '';
+      const tournamentRow = document.getElementById('tournamentCodesRow');
+      if (tournamentRow) tournamentRow.style.display = 'none';
+
+      hideSeedUI();
+      updateRestartVisibility();
+
+      const rbtn = document.getElementById('restartBtn');
+      const changeBtn = document.getElementById('changeRulesetBtn');
+
+      if (ruleset === 'TOURNAMENT') {
+        // Show identity screen; hide both restart and change-ruleset in tournament
+        document.getElementById('tournamentStep').style.display = 'flex';
+        if (rbtn) rbtn.style.display = 'none';
+        if (changeBtn) changeBtn.style.display = 'none';
+        return;
+      }
+
+      if (ruleset === 'BASIC') {
+      // NEW: show Basic Options screen instead of going straight to the draft UI
+      document.getElementById('basicOptionsStep').style.display = 'flex';
+      if (rbtn) rbtn.style.display = '';
+      if (changeBtn) changeBtn.style.display = '';
+      // Do not call restart() or getNextDraft() yet; that happens after Start Draft is clicked
+      return;
+     }
+
+      // Otherwise show app
+      document.getElementById('appContainer').style.display = 'flex';
+      if (rbtn) rbtn.style.display = '';
+      if (changeBtn) changeBtn.style.display = '';
+
+      restart();
+
+      if (ruleset === 'SEALED') {
+        startSealedFlow();
+        return;
+      }
+
+      if (poolLoaded) {
+        getNextDraft();
+      } else {
+        const cardsDiv = document.getElementById('cards');
+        if (cardsDiv) cardsDiv.innerHTML = '<div class="status-banner">LOADING…</div>';
+      }
+    }
+
+    function startTournamentDraft() {
+      const err = document.getElementById('tournamentError');
+      err.textContent = '';
+
+      const u = document.getElementById('tournamentUsername').value || '';
+      const r = document.getElementById('tournamentRiotId').value || '';
+      const d = (document.getElementById('tournamentDiscordId').value || '').trim();
+      const p = (document.getElementById('tournamentPassword').value || '').trim();
+
+      if (!u) { err.textContent = 'USERNAME IS REQUIRED.'; return; }
+      if (!r) { err.textContent = 'RIOT ID IS REQUIRED.'; return; }
+      if (!d) { err.textContent = 'DISCORD ID IS REQUIRED.'; return; }
+      if (p !== TOURNAMENT_PASSWORD) { err.textContent = 'INVALID PASSWORD.'; return; }
+
+      // Force tournament configuration
+      basicFormatMode = 'standard';
+      basicCardsPerPickMode = 'two';
+      basicBucketSize = 2;
+      setBasicOption('format', 'standard');
+      setBasicOption('cardsPerPick', 'two');
+      setBasicOption('bucketSize', 2);
+
+      tournamentUsedChampionCodes = new Set();
+
+      tUsername = u;
+      tRiotId = r;
+      tDiscordId = d;
+      tStarted = true;
+      tournamentDeckCodes = [];
+
+      // Proceed to draft UI
+      document.getElementById('tournamentStep').style.display = 'none';
+      document.getElementById('appContainer').style.display = 'flex';
+
+      const discordLink = document.getElementById('discordLink');
+      if (discordLink) discordLink.style.display = 'none';
+
+      // Hide both restart & change ruleset during tournament drafting
+      const rbtn = document.getElementById('restartBtn');
+      const changeBtn = document.getElementById('changeRulesetBtn');
+      if (rbtn) rbtn.style.display = 'none';
+      if (changeBtn) changeBtn.style.display = 'none';
+
+      restart();
+      if (poolLoaded) {
+        if (getEffectiveRuleset() === 'SEALED') startSealedFlow();
+        else getNextDraft();
+      } else {
+        const cardsDiv = document.getElementById('cards');
+        if (cardsDiv) cardsDiv.innerHTML = '<div class="status-banner">LOADING…</div>';
+      }
+      updateRegionCounters();
+    }
+
+    function cancelTournament() {
+      // Back to ruleset selection
+      document.getElementById('tournamentStep').style.display = 'none';
+      document.getElementById('rulesetStep').style.display = 'flex';
+      // Clear identity
+      tUsername = ''; tRiotId = ''; tDiscordId = '';
+      const pField = document.getElementById('tournamentPassword');
+      if (pField) pField.value = '';
+      tStarted = false;
+      ruleset = 'BASIC';
+      tournamentDeckCodes = [];
+      tournamentUsedChampionCodes = new Set();
+      updateRestartVisibility();
+
+      const discordLink = document.getElementById('discordLink');
+      if (discordLink) discordLink.style.display = 'inline-block';
+    }
+
+    function setBasicOption(key, value) {
+      if (key === 'format') basicFormatMode = value;               // 'standard'|'eternal'
+      if (key === 'cardsPerPick') basicCardsPerPickMode = value;   // 'one'|'two'|'three'
+      if (key === 'bucketSize') basicBucketSize = Number(value);   // 1|2|3
+
+      const map = {
+        format: { standard: 'basicFormatStandardBtn', eternal: 'basicFormatEternalBtn' },
+        cardsPerPick: { one: 'basicCardsOneBtn', two: 'basicCardsTwoBtn', three: 'basicCardsThreeBtn' },
+        bucketSize: { 1: 'basicBucket1Btn', 2: 'basicBucket2Btn', 3: 'basicBucket3Btn' }
+      };
+
+      // Toggle active classes
+      Object.values(map.format).forEach(id => document.getElementById(id)?.classList.remove('active'));
+      document.getElementById(map.format[basicFormatMode])?.classList.add('active');
+
+      Object.values(map.cardsPerPick).forEach(id => document.getElementById(id)?.classList.remove('active'));
+      document.getElementById(map.cardsPerPick[basicCardsPerPickMode])?.classList.add('active');
+
+      Object.values(map.bucketSize).forEach(id => document.getElementById(id)?.classList.remove('active'));
+      document.getElementById(map.bucketSize[basicBucketSize])?.classList.add('active');
+    }
+
+    function startBasicDraft() {
+      const err = document.getElementById('basicOptionsError');
+      if (err) err.textContent = '';
+
+      const seedApplied = applyDraftSeedFromInput();
+      if (!seedApplied) {
+        clearDraftSeed();
+        setDraftSeed(makeRandomSeed());
+        draftSeedInfo = {
+          v: 1,
+          seed: draftSeedInitial ?? draftSeedValue,
+          format: basicFormatMode,
+          cardsPerPick: basicCardsPerPickMode,
+          bucketSize: basicBucketSize
+        };
+      }
+
+      // Proceed to draft UI (logic wiring comes later)
+      document.getElementById('basicOptionsStep').style.display = 'none';
+      document.getElementById('appContainer').style.display = 'flex';
+
+      const discordLink = document.getElementById('discordLink');
+      if (discordLink) discordLink.style.display = 'none';
+
+      const rbtn = document.getElementById('restartBtn');
+      const changeBtn = document.getElementById('changeRulesetBtn');
+      if (rbtn) rbtn.style.display = '';
+      if (changeBtn) changeBtn.style.display = '';
+      updateRestartVisibility();
+
+      restart();
+      if (poolLoaded) {
+        getNextDraft();
+      } else {
+        const cardsDiv = document.getElementById('cards');
+        if (cardsDiv) cardsDiv.innerHTML = '<div class="status-banner">LOADING…</div>';
+      }
+    }
+
+    function cancelBasic() {
+      // Back to ruleset selection
+      document.getElementById('basicOptionsStep').style.display = 'none';
+      document.getElementById('rulesetStep').style.display = 'flex';
+      ruleset = 'BASIC';
+      clearDraftSeed();
+      updateRestartVisibility();
+
+      const discordLink = document.getElementById('discordLink');
+      if (discordLink) discordLink.style.display = 'inline-block';
+    }
+        function loadCardPoolAndStartDraft() {
+      google.script.run.withSuccessHandler(function(pool) {
+        cardPool = pool || [];
+        poolLoaded = true;
+        renderDeck(); // harmless
+
+        // Auto-resume flows that were selected before pool was ready
+        if (appReady) {
+          const effective = getEffectiveRuleset();
+          if (effective === 'SEALED') {
+            startSealedFlow();
+          } else if (ruleset === 'TOURNAMENT') {
+            if (tStarted) getNextDraft();
+          } else {
+            getNextDraft();
+          }
+        }
+      }).getFullCardPool();
+    }
+
+    /* Utilities */
+    function normalizeArray(v) { return Array.isArray(v) ? v : []; }
+    function toUpperArray(v) { return normalizeArray(v).map(s => String(s || '').toUpperCase()); }
+    function isRuneterraChampion(card) { return !!(card && card.rarity === "Champion" && Array.isArray(card.regions) && card.regions.includes("Runeterra")); }
+    function isMonoRegionNonRT(champ) { return !!(champ && champ.rarity === "Champion" && !isRuneterraChampion(champ) && Array.isArray(champ.regions) && champ.regions.length === 1); }
+    function isDualRegionNonRT(champ) { return !!(champ && champ.rarity === "Champion" && !isRuneterraChampion(champ) && Array.isArray(champ.regions) && champ.regions.length === 2); }
+    function isOriginLock(slot) { return !!(slot && typeof slot === 'object' && slot.kind === 'origin' && slot.origin); }
+    function getRegionValue(slot) { if (typeof slot === 'string') return slot; if (slot && slot.kind === 'region') return slot.value; return null; }
+    function getCopiesInDeck(deckArr, cardCode) {
+      if (!Array.isArray(deckArr) || !cardCode) return 0;
+      let count = 0;
+      for (let i = 0; i < deckArr.length; i++) { const c = deckArr[i]; if (c && c.cardCode === cardCode) count++; }
+      return count;
+    }
+
+    function computeTypeCounts(deckArr) {
+      let champs = 0, units = 0, spells = 0, landmarks = 0, equipment = 0;
+      for (let i = 0; i < deckArr.length; i++) {
+        const c = deckArr[i];
+        if (!c) continue;
+        if (c.rarity === "Champion") champs++;
+
+        const t = c.type;
+        if (t === "Unit") {
+          if (c.rarity !== "Champion") units++;
+        } else if (t === "Spell") {
+          spells++;
+        } else if (t === "Landmark") {
+          landmarks++;
+        } else if (t === "Equipment") { 
+          equipment++;
+        }
+      }
+      return { champs, units, spells, landmarks, equipment };
+    }
+
+    function renderTypeCounter(label, iconUrl, count) {
+      // If the image fails to load, we gracefully fall back to a labeled pill
+      const imgOrLabel = iconUrl
+        ? `<img src="${iconUrl}" alt="${label}" title="${label}" onerror="this.style.display='none';this.nextElementSibling.previousElementSibling.outerHTML='<span style=&quot;border:1px solid #1f1f1f;background:#fff;color:#1f1f1f;border-radius:4px;padding:2px 6px;&quot;>${label}</span>';">`
+        : `<span style="border:1px solid #1f1f1f;background:#fff;color:#1f1f1f;border-radius:4px;padding:2px 6px;">${label}</span>`;
+      return `<div class="type-counter">${imgOrLabel}<span class="count">x${count}</span></div>`;
+    }
+
+    function renderTypeCounters() {
+      const el = document.getElementById('typeCounters');
+      if (!el) return;
+
+      const { champs, units, spells, landmarks, equipment } = computeTypeCounts(deck);
+
+      el.innerHTML =
+        renderTypeCounter('Champion', TYPE_ICONS.Champion, champs) +
+        renderTypeCounter('Unit', TYPE_ICONS.Unit, units) +
+        renderTypeCounter('Spell', TYPE_ICONS.Spell, spells) +
+        renderTypeCounter('Landmark', TYPE_ICONS.Landmark, landmarks) +
+        renderTypeCounter('Equipment', TYPE_ICONS.Equipment, equipment);
+    }
+
+    function isLikelyTargetedSpell(card) {
+      if (!card || card.type !== "Spell") return false;
+      const text = (card.descriptionRaw || "").toLowerCase();
+      const groupTokens = [" each ", " all ", " all-", " enemies", " allies", " units", " followers", " strike all", " stun all"];
+      if (groupTokens.some(t => text.indexOf(t) !== -1)) return false;
+      const targetedTokens = ["an ally","an enemy","a unit","to an ally","to an enemy","to a unit","grant an","recall a","capture a","kill a","silence a","frostbite a","strike a","stun a","deal ","give ","heal ","obliterate ","choose a","mark an"];
+      return targetedTokens.some(t => text.indexOf(t) !== -1);
+    }
+
+    /* Origin matcher */
+    function matchesOrigin(card, origin) {
+      if (!card || !origin || card.rarity === "Champion") return false;
+
+      const keywords = normalizeArray(card.keywords);
+      const subtypes = toUpperArray(card.subtypes);
+      const type = card.type || "";
+      const name = card.name || "";
+      const code = String(card.cardCode || "").toUpperCase();
+      const desc = (card.descriptionRaw || "").toLowerCase();
+      const cost = typeof card.cost === "number" ? card.cost : null;
+      const spellSpeed = card.spellSpeed || card.spellSpeedRef || null;
+
+      // AND filters
+      if (typeof origin.minCost === "number") { if (cost === null || cost < origin.minCost) return false; }
+      if (Array.isArray(origin.requireTypes) && origin.requireTypes.length > 0) { if (!origin.requireTypes.includes(type)) return false; }
+      if (Array.isArray(origin.requireKeywords) && origin.requireKeywords.length > 0) { if (!keywords.some(k => origin.requireKeywords.includes(k))) return false; }
+      if (Array.isArray(origin.requireSubtypes) && origin.requireSubtypes.length > 0) {
+        const reqSubs = toUpperArray(origin.requireSubtypes);
+        if (!subtypes.some(s => reqSubs.includes(s))) return false;
+      }
+      if (Array.isArray(origin.requireSpellSpeeds) && origin.requireSpellSpeeds.length > 0) { if (!spellSpeed || !origin.requireSpellSpeeds.includes(spellSpeed)) return false; }
+      if (origin.forbidTargeted === true) { if (isLikelyTargetedSpell(card)) return false; }
+
+      // OR lists + aliases + extras
+      const allowedKeywords = Array.isArray(origin.allowedKeywords) ? origin.allowedKeywords : [];
+      const allowedSubtypes = Array.isArray(origin.allowedSubtypes) ? origin.allowedSubtypes : [];
+      const allowedTypes = Array.isArray(origin.allowedTypes) ? origin.allowedTypes : [];
+      const allowedNames = Array.isArray(origin.allowedNames) ? origin.allowedNames
+                          : Array.isArray(origin.whitelistNames) ? origin.whitelistNames : [];
+      const allowedCardCodesRaw = Array.isArray(origin.allowedCardCodes) ? origin.allowedCardCodes
+                              : Array.isArray(origin.whitelist) ? origin.whitelist
+                              : Array.isArray(origin.whitelistCardCodes) ? origin.whitelistCardCodes : [];
+      const jhinCodes = Array.isArray(origin.jhinLegalFollowers) ? origin.jhinLegalFollowers : [];
+      const ryzeCodes = Array.isArray(origin.ryzeLegalCardCodes) ? origin.ryzeLegalCardCodes : [];
+      const allowedCardCodes = allowedCardCodesRaw.concat(jhinCodes, ryzeCodes).map(x => String(x || "").toUpperCase());
+      const textIncludes = Array.isArray(origin.textIncludes) ? origin.textIncludes.map(t => String(t || "").toLowerCase()) : [];
+
+      const hasOr =
+        (allowedKeywords && allowedKeywords.length) ||
+        (allowedSubtypes && allowedSubtypes.length) ||
+        (allowedTypes && allowedTypes.length) ||
+        (allowedNames && allowedNames.length) ||
+        (allowedCardCodes && allowedCardCodes.length) ||
+        (textIncludes && textIncludes.length);
+
+      if (!hasOr) return true;
+      if (allowedKeywords.length > 0 && keywords.some(k => allowedKeywords.includes(k))) return true;
+      if (allowedSubtypes.length > 0) {
+        const allowedSubsUpper = toUpperArray(allowedSubtypes);
+        if (subtypes.some(s => allowedSubsUpper.includes(s))) return true;
+      }
+      if (allowedTypes.length > 0 && allowedTypes.includes(type)) return true;
+      if (allowedNames.length > 0 && allowedNames.includes(name)) return true;
+      if (allowedCardCodes.length > 0 && allowedCardCodes.includes(code)) return true;
+      if (textIncludes.length > 0 && textIncludes.some(tok => tok && desc.indexOf(tok) !== -1)) return true;
+
+      return false;
+    }
+
+    function matchesAnyLock(card, regionLockArr) {
+      if (!Array.isArray(regionLockArr)) return false;
+      for (let i = 0; i < regionLockArr.length; i++) {
+        const slot = regionLockArr[i];
+        if (!slot) continue;
+        if (isOriginLock(slot)) {
+          if (matchesOrigin(card, slot.origin)) return true;
+        } else {
+          const regionVal = getRegionValue(slot);
+          if (regionVal && Array.isArray(card.regions) && card.regions.includes(regionVal)) return true;
+        }
+      }
+      return false;
+    }
+
+    /* Region lock behavior (BASIC-like): lock mono champs immediately; dual champ side locks set by first single-region pick */
+    function updateRegionLock(regionLockArr, pNum, card, c1, c2) {
+      if (!isBasicLike()) return regionLockArr;
+
+      const newRegionLock = Array.isArray(regionLockArr) ? [...regionLockArr] : [null, null];
+      const slot0IsOrigin = isOriginLock(newRegionLock[0]);
+      const slot1IsOrigin = isOriginLock(newRegionLock[1]);
+
+      const champ1Mono = isMonoRegionNonRT(c1);
+      const champ2Mono = isMonoRegionNonRT(c2);
+      const champ1Dual = isDualRegionNonRT(c1);
+      const champ2Dual = isDualRegionNonRT(c2);
+
+      // Pick 1
+      if (pNum === 1) {
+        if (isRuneterraChampion(c1)) newRegionLock[0] = { kind: 'origin', origin: c1.origin, champName: c1.name };
+        else if (champ1Mono) newRegionLock[0] = (c1 && c1.regions && c1.regions[0]) || null;
+        return newRegionLock;
+      }
+      // Pick 2
+      if (pNum === 2) {
+        if (isRuneterraChampion(c2)) newRegionLock[1] = { kind: 'origin', origin: c2.origin, champName: c2.name };
+        else if (champ2Mono) newRegionLock[1] = (c2 && c2.regions && c2.regions[0]) || null;
+        return newRegionLock;
+      }
+
+      // Pick 3 — NEW: dual+mono overlap => lock both sides to dual champ's regions
+      if (pNum === 3) {
+        if (preferredRegionPair && !isRuneterraChampion(c1) && !isRuneterraChampion(c2)) {
+          newRegionLock[0] = preferredRegionPair[0];
+          newRegionLock[1] = preferredRegionPair[1];
+          return newRegionLock;
+        }
+
+        // existing pick-3 logic...
+        if (isRuneterraChampion(c1)) return newRegionLock;
+        if (newRegionLock[0] == null) {
+          if (champ1Dual && card && Array.isArray(card.regions)) {
+            const chosen = card.regions.find(r => c1.regions.includes(r));
+            if (chosen) newRegionLock[0] = chosen;
+            return newRegionLock;
+          }
+          if (!slot0IsOrigin && card && Array.isArray(card.regions) && card.regions.length === 1) {
+            const r = card.regions[0];
+            if (!c1 || !Array.isArray(c1.regions) || c1.regions.includes(r)) newRegionLock[0] = r;
+          }
+        }
+        return newRegionLock;
+      }
+
+      // Pick 4 — NEW: dual+mono overlap => lock both sides to dual champ's regions
+      if (pNum === 4) {
+        if (preferredRegionPair && !isRuneterraChampion(c1) && !isRuneterraChampion(c2)) {
+          newRegionLock[0] = preferredRegionPair[0];
+          newRegionLock[1] = preferredRegionPair[1];
+          return newRegionLock;
+        }
+
+        // existing pick-4 logic...
+        if (isRuneterraChampion(c2)) return newRegionLock;
+
+          if (champ1Mono && champ2Mono && c1 && c2 && Array.isArray(c1.regions) && Array.isArray(c2.regions)) {
+            const shared = c1.regions[0];
+            if (shared && shared === c2.regions[0] && card && Array.isArray(card.regions) && card.regions.length > 0) {
+              // Prefer a region different from the shared if the card is dual-region; otherwise take its single region
+              let chosen = null;
+              for (const r of card.regions) {
+                if (r !== shared) { chosen = r; break; }
+              }
+              if (!chosen) chosen = card.regions[0];
+
+              // Ensure slot 0 is the shared (if not already set), and slot 1 becomes the newly chosen region
+              if (newRegionLock[0] == null) newRegionLock[0] = shared;
+              newRegionLock[1] = chosen;
+              return newRegionLock;
+            }
+          }
+
+        if (newRegionLock[1] == null) {
+          if (champ2Dual && card && Array.isArray(card.regions)) {
+            const chosen = card.regions.find(r => c2.regions.includes(r));
+            if (chosen) newRegionLock[1] = chosen;
+            return newRegionLock;
+          }
+          if (!slot1IsOrigin && card && Array.isArray(card.regions) && card.regions.length === 1) {
+            const r = card.regions[0];
+            if (!c2 || !Array.isArray(c2.regions) || c2.regions.includes(r)) newRegionLock[1] = r;
+          }
+        }
+        return newRegionLock;
+      }
+
+      return newRegionLock;
+    }
+
+    function clientIsLegal(card, deckArr, pNum, regionLockArr, c1, c2) {
+      if (!card || !card.cardCode) return false;
+      if (getCopiesInDeck(deckArr, card.cardCode) >= 3) return false;
+      if (isTournamentChampionLocked(card)) return false;
+
+      const effective = getEffectiveRuleset();
+      const bucketSize = getRulesetBucketSize();
+      const isBucketedMode = effective === 'BASIC' || effective === 'FEATURED';
+
+      // Format filter for BASIC: only allow cards flagged Standard by the JSON
+      if (effective === 'BASIC' && basicFormatMode === 'standard') {
+        if (!isCardStandard(card)) return false;
+      }
+
+      if (pNum === 1) return card.rarity === "Champion";
+      if (pNum === 2) {
+      if (card.rarity !== "Champion") return false;
+      if (!c1 || card.name === c1.name) return false;
+      
+      // NEW: Tournament mode - block region pairs already used
+      if (isTournamentMode() && c1) {
+        const c1Regions = c1.regions || [];
+        const c2Regions = card.regions || [];
+        for (const r1 of c1Regions) {
+          for (const r2 of c2Regions) {
+            if (isTournamentRegionPairUsed(r1, r2)) {
+              return false; // This champion creates a forbidden region pair
+            }
+          }
+        }
+      }
+      
+      return true;
+      }
+
+      const champ1Mono = isMonoRegionNonRT(c1);
+      const champ2Mono = isMonoRegionNonRT(c2);
+      const champ1Dual = isDualRegionNonRT(c1);
+      const champ2Dual = isDualRegionNonRT(c2);
+
+      if (pNum === 3) {
+        // Enforce mono-region on pick 3 only if bucketSize>1 AND champ1 is NOT Runeterra
+        if (isBucketedMode && bucketSize > 1 && !isRuneterraChampion(c1)) {
+          if (card.rarity === "Champion") return false;
+          if (!Array.isArray(card.regions) || card.regions.length !== 1) return false;
+        }
+
+        if (isRuneterraChampion(c1)) return card.rarity !== "Champion" && matchesOrigin(card, c1.origin);
+        if (champ1Mono && champ2Mono) {
+          const r1 = c1.regions[0];
+          return card.rarity !== "Champion" && (card.regions || []).includes(r1);
+        }
+        if (champ1Dual) return card.rarity !== "Champion" && (card.regions || []).some(r => c1.regions.includes(r));
+        return card.rarity !== "Champion" && (card.regions || []).some(r => (c1.regions || []).includes(r));
+      }
+
+      if (pNum === 4) {
+        // Enforce mono-region on pick 4 only if bucketSize>1 AND champ2 is NOT Runeterra
+        if (isBucketedMode && bucketSize > 1 && !isRuneterraChampion(c2)) {
+          if (card.rarity === "Champion") return false;
+          if (!Array.isArray(card.regions) || card.regions.length !== 1) return false;
+        }
+
+        if (isRuneterraChampion(c2)) return card.rarity !== "Champion" && matchesOrigin(card, c2.origin);
+
+            const champ1Mono = isMonoRegionNonRT(c1);
+            const champ2Mono = isMonoRegionNonRT(c2);
+            const champ2Dual = isDualRegionNonRT(c2);
+
+        if (champ1Mono && champ2Mono) {
+          const r1 = (c1 && Array.isArray(c1.regions)) ? c1.regions[0] : null;
+          const r2 = (c2 && Array.isArray(c2.regions)) ? c2.regions[0] : null;
+          if (r1 && r2 && r1 === r2) {
+            // Both champs are same mono region, player can pick any region for pick 4
+            // NEW: But in tournament mode, block regions that would create forbidden combinations
+            if (isTournamentMode() && card.rarity !== "Champion") {
+              const cardRegions = card.regions || [];
+              for (const cardRegion of cardRegions) {
+                if (isTournamentRegionPairUsed(r1, cardRegion)) {
+                  return false; // This card would create a forbidden region pair
+                }
+              }
+            }
+            return card.rarity !== "Champion";
+          }
+          // Different mono regions: keep existing behavior (use champ2's region)
+          return card.rarity !== "Champion" && (card.regions || []).includes(r2);
+        }
+
+        if (champ2Dual) return card.rarity !== "Champion" && (card.regions || []).some(r => c2.regions.includes(r));
+        return card.rarity !== "Champion" && (card.regions || []).some(r => (c2.regions || []).includes(r));
+      }
+
+      if (pNum >= 5) {
+        if (card.rarity === "Champion") return false;
+        return matchesAnyLock(card, regionLockArr);
+      }
+      return false;
+    }
+
+    function currentPrompt() {
+      const effective = getEffectiveRuleset();
+      const label = (ruleset === 'TOURNAMENT') ? 'Tournament'
+        : (effective === 'CHAOS') ? 'Chaos'
+        : (effective === 'SEALED') ? 'Sealed'
+        : (effective === 'FEATURED') ? 'Featured'
+        : 'Basic';
+
+      if (effective === 'CHAOS') return `(${label}) PICK ANY CARD`;
+      if (effective === 'SEALED') {
+        if (!sealedPacks.length || sealedOpened.some(opened => !opened)) return `(${label}) OPEN YOUR PACKS`;
+        return `(${label}) SELECT UP TO 40 CARDS`;
+      }
+      if (effective === 'FEATURED' && pickNumber === 1) return `(${label}) PICK A FEATURED CHAMPION PAIR`;
+      // BASIC-like
+      if (pickNumber === 1) return `(${label}) PICK A CHAMPION`;
+      if (pickNumber === 2) return `(${label}) PICK A DIFFERENT CHAMPION`;
+
+      const champ1Mono = isMonoRegionNonRT(champ1);
+      const champ2Mono = isMonoRegionNonRT(champ2);
+      const champ1Dual = isDualRegionNonRT(champ1);
+      const champ2Dual = isDualRegionNonRT(champ2);
+
+      if (pickNumber === 3) {
+        if (isRuneterraChampion(champ1)) return `(${label}) PICK A CARD THAT FITS ${champ1.name}'S ORIGIN`;
+        if (champ1Mono && champ2Mono) {
+          const r1 = champ1.regions[0];
+          return `(${label}) PICK A CARD FROM ${champ1.name}'S REGION (${r1})`;
+        }
+        if (champ1Dual) return `(${label}) PICK A CARD FROM EITHER OF ${champ1.name}'S REGIONS (${champ1.regions.join(", ")})`;
+        return `(${label}) PICK A CARD FROM ${champ1.name}'S REGIONS`;
+      }
+
+      if (pickNumber === 4) {
+        if (isRuneterraChampion(champ2)) return `(${label}) PICK A CARD THAT FITS ${champ2.name}'S ORIGIN`;
+
+            const champ1Mono = isMonoRegionNonRT(champ1);
+            const champ2Mono = isMonoRegionNonRT(champ2);
+            const champ2Dual = isDualRegionNonRT(champ2);
+
+        if (champ1Mono && champ2Mono) {
+          const r1 = champ1?.regions?.[0];
+          const r2 = champ2?.regions?.[0];
+          if (r1 && r2 && r1 === r2) {
+            return `(${label}) PICK A CARD FROM ANY REGION`;
+          }
+          // Different mono regions: prompt for champ2's region
+          return `(${label}) PICK A CARD FROM ${champ2.name}'S REGION (${r2})`;
+        }
+        if (champ2Dual) return `(${label}) PICK A CARD FROM EITHER OF ${champ2.name}'S REGIONS (${champ2.regions.join(", ")})`;
+        return `(${label}) PICK A CARD FROM ${champ2.name}'S REGIONS`;
+      }
+
+      if (pickNumber >= 5) {
+        const sidesDesc = regionLock.map(s => {
+          if (!s) return "(UNSET)";
+          if (typeof s === 'string') return s;
+          if (s.kind === 'origin') return `${s.champName}'S ORIGIN`;
+          return "(UNKNOWN)";
+        }).join(" OR ");
+        return `(${label}) PICK A CARD MATCHING ANY LOCKED SIDE (${sidesDesc})`;
+      }
+      return `(${label}) DRAFT COMPLETE!`;
+    }
+
+    function getClientDraftChoices(deckArr, pNum, lock, c1, c2) {
+      const legal = cardPool.filter(card => clientIsLegal(card, deckArr, pNum, lock, c1, c2));
+
+      // BASIC coverage for dual-region champs on picks 3/4 when bucket size == 1
+      const effective = getEffectiveRuleset();
+      const needCoverage = (effective === 'BASIC' && basicBucketSize <= 1 && (pNum === 3 || pNum === 4));
+      if (needCoverage) {
+        const champ = (pNum === 3) ? c1 : c2;
+        if (isDualRegionNonRT(champ)) {
+          const rA = champ.regions[0];
+          const rB = champ.regions[1];
+
+          // Pools of legal cards that include the required regions
+          const poolA = legal.filter(c => Array.isArray(c.regions) && c.regions.includes(rA));
+          const poolB = legal.filter(c => Array.isArray(c.regions) && c.regions.includes(rB));
+
+          const picks = [];
+          const takenCodes = new Set();
+
+          function takeOneFrom(pool) {
+            if (!pool.length) return;
+            const idx = Math.floor(rand() * pool.length);
+            const chosen = pool[idx];
+            if (!chosen || takenCodes.has(chosen.cardCode)) return;
+            picks.push(chosen);
+            takenCodes.add(chosen.cardCode);
+          }
+
+          // Try to ensure at least one from each region
+          takeOneFrom(poolA);
+          // Avoid duplicates if a card exists in both pools
+          const poolBFiltered = poolB.filter(c => !takenCodes.has(c.cardCode));
+          takeOneFrom(poolBFiltered);
+
+          // Fill remaining slots up to 3 from any remaining legal cards
+          const remaining = legal.filter(c => !takenCodes.has(c.cardCode));
+          while (picks.length < 3 && remaining.length > 0) {
+            const idx = Math.floor(rand() * remaining.length);
+            const chosen = remaining[idx];
+            picks.push(chosen);
+            takenCodes.add(chosen.cardCode);
+            remaining.splice(idx, 1);
+          }
+          return picks;
+        }
+      }
+
+      // Existing behavior when no coverage needed
+      const picks = [];
+      const available = [...legal];
+      while (picks.length < 3 && available.length > 0) {
+        const idx = Math.floor(rand() * available.length);
+        picks.push(available[idx]);
+        available.splice(idx, 1);
+      }
+      return picks;
+    }
+
+    /* CHAOS */
+    function getChaosDraftChoices(deckArr) {
+      const available = cardPool.filter(card => {
+        if (!card || !card.cardCode) return false;
+        return getCopiesInDeck(deckArr, card.cardCode) < 3;
+      });
+      const picks = [];
+      const pool = [...available];
+      while (picks.length < 3 && pool.length > 0) {
+        const idx = Math.floor(rand() * pool.length);
+        picks.push(pool[idx]);
+        pool.splice(idx, 1);
+      }
+      return picks;
+    }
+
+    /* Rendering common picks */
+    function renderCards(cards) {
+      document.getElementById('pickNum').textContent = currentPrompt();
+      const cardsDiv = document.getElementById('cards');
+      cardsDiv.className = 'card-group'; // default
+      cardsDiv.innerHTML = '';
+      cards.forEach(card => {
+        const cardDiv = document.createElement('div');
+        const isChamp = card.rarity === 'Champion';
+        cardDiv.className = 'card' + (isChamp ? ' champion-bg' : '');
+        cardDiv.innerHTML = `
+          <img src="${card.imageUrl}" alt="${card.name}"><br>
+          <strong>${card.name}</strong><br>
+          <span class="card-regions">REGIONS: ${card.regions.join(', ')}</span>
+        `;
+        cardDiv.onclick = () => pickCard(card);
+        cardsDiv.appendChild(cardDiv);
+      });
+    }
+
+    function getClientDraftBuckets(deckArr, pNum, lock, c1, c2, bucketSize) {
+      // Legal pool (already filtered for format/origin/region constraints)
+      const legal = cardPool.filter(card => clientIsLegal(card, deckArr, pNum, lock, c1, c2));
+
+      // Should we enforce "same-region within bucket"?
+      // Only for BASIC/FEATURED, bucketSize > 1, pick 3/4, and NOT Runeterra champ for that pick.
+      const effective = getEffectiveRuleset();
+      const champForPick = (pNum === 3) ? c1 : (pNum === 4 ? c2 : null);
+      const enforceSameRegion = (
+        (effective === 'BASIC' || effective === 'FEATURED') &&
+        bucketSize > 1 &&
+        (pNum === 3 || pNum === 4) &&
+        champForPick &&
+        !isRuneterraChampion(champForPick)
+      );
+
+      // If same-region buckets are not enforced, fall back to original behavior
+      if (!enforceSameRegion) {
+        const buckets = [];
+        const pool = [...legal];
+        for (let b = 0; b < 3; b++) {
+          const bucket = [];
+          const used = new Set();
+          while (bucket.length < bucketSize && pool.length > 0) {
+            const idx = Math.floor(rand() * pool.length);
+            const candidate = pool[idx];
+            pool.splice(idx, 1);
+            if (!candidate || used.has(candidate.cardCode)) continue;
+            used.add(candidate.cardCode);
+            bucket.push(candidate);
+          }
+          if (bucket.length > 0) buckets.push(bucket);
+        }
+        return buckets;
+      }
+
+      // Same-region buckets enforced for picks 3/4 (non-Runeterra champ)
+      // Group legal cards by their single region
+      const regionGroups = new Map();
+      for (const c of legal) {
+        if (!Array.isArray(c.regions) || c.regions.length !== 1) continue;
+        const r = c.regions[0];
+        if (!regionGroups.has(r)) regionGroups.set(r, []);
+        regionGroups.get(r).push(c);
+      }
+
+      // Shuffle each region group's cards for variety
+      for (const [r, arr] of regionGroups.entries()) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(rand() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      }
+
+      const buckets = [];
+      const isDual = isDualRegionNonRT(champForPick);
+      const requiredRegions = isDual ? [champForPick.regions[0], champForPick.regions[1]] : [];
+
+      function buildBucketFromRegion(regionKey) {
+        const arr = regionGroups.get(regionKey) || [];
+        if (!arr.length) return null;
+        const usedCodes = new Set();
+        const bucket = [];
+        while (bucket.length < bucketSize && arr.length > 0) {
+          const candidate = arr.pop();
+          if (!candidate || usedCodes.has(candidate.cardCode)) continue;
+          usedCodes.add(candidate.cardCode);
+          bucket.push(candidate);
+        }
+        regionGroups.set(regionKey, arr);
+        return bucket.length > 0 ? bucket : null;
+      }
+
+      // Coverage: ensure at least one bucket from each champ region when dual-region
+      if (isDual) {
+        for (const reg of requiredRegions) {
+          if (buckets.length >= 3) break;
+          const bkt = buildBucketFromRegion(reg);
+          if (bkt) buckets.push(bkt);
+        }
+      }
+
+      // Fill remaining buckets from any available region, allowing reuse
+      while (buckets.length < 3) {
+        const availableRegions = Array.from(regionGroups.entries()).filter(([, arr]) => arr.length > 0);
+        if (!availableRegions.length) break;
+        const ridx = Math.floor(rand() * availableRegions.length);
+        const [regKey] = availableRegions[ridx];
+        const bkt = buildBucketFromRegion(regKey);
+        if (bkt) buckets.push(bkt);
+      }
+
+      return buckets;
+    }
+
+    // Render buckets as tiles (NEW)
+    function renderBuckets(buckets) {
+      document.getElementById('pickNum').textContent = currentPrompt();
+      const cardsDiv = document.getElementById('cards');
+      cardsDiv.className = 'card-group';
+      cardsDiv.innerHTML = '';
+      buckets.forEach(bucket => {
+        const tile = document.createElement('div');
+        tile.className = 'card';
+        const inner = bucket.map(c => `
+          <div style="display:inline-block;margin:6px;vertical-align:top;">
+            <img src="${c.imageUrl}" alt="${c.name}" style="width:160px;height:auto;border-radius:8px;"><br>
+            <strong>${c.name}</strong><br>
+            <span class="card-regions">REGIONS: ${c.regions.join(', ')}</span>
+          </div>
+        `).join('');
+        tile.innerHTML = inner;
+        tile.onclick = () => pickBucket(bucket);
+        cardsDiv.appendChild(tile);
+      });
+    }
+
+    // Pick an entire bucket (NEW)
+    function pickBucket(cards) {
+      if (!Array.isArray(cards) || cards.length === 0) return;
+
+      // IMPORTANT: set region lock from the first selected card BEFORE adding cards or advancing pickNumber
+      // This mirrors what pickCard() does for non-champion picks (3 and 4)
+      regionLock = updateRegionLock(regionLock, pickNumber, cards[0], champ1, champ2);
+
+      for (const c of cards) {
+        if (deck.length >= 40) { setStatus("DECK ALREADY HAS 40 CARDS."); break; }
+        const left = Math.min(3 - getCopiesInDeck(deck, c.cardCode), 40 - deck.length);
+        if (left <= 0) continue;
+
+        let perCard = 1;
+        const effective = getEffectiveRuleset();
+        if (effective === 'BASIC') {
+          if (basicCardsPerPickMode === 'two') perCard = 2;
+          else if (basicCardsPerPickMode === 'three') perCard = 3;
+        } else if (effective === 'FEATURED') {
+          perCard = 2;
+        }
+        perCard = Math.min(perCard, left);
+
+        for (let i = 0; i < perCard; i++) {
+          if (deck.length >= 40) { setStatus("DECK ALREADY HAS 40 CARDS."); break; }
+          deck.push(c);
+        }
+      }
+
+      // Advance exactly one draft step per bucket selection
+      pickNumber += 1;
+      if (deck.length >= 40) pickNumber = -1;
+
+      renderDeck();
+      maybeGenerateDeckCode();
+      getNextDraft();
+    }
+
+    function getManaCost(card) {
+      if (typeof card.cost !== "undefined") return card.cost;
+      if (typeof card.manaCost !== "undefined") return card.manaCost;
+      if (typeof card.mana !== "undefined") return card.mana;
+      return 0;
+    }
+    function getMostRelevantRegion(card) {
+      for (let i = 0; i < regionLock.length; i++) {
+        const slot = regionLock[i];
+        if (!slot || isOriginLock(slot)) continue;
+        const rv = getRegionValue(slot);
+        if (rv && card.regions.includes(rv)) return rv;
+      }
+      if (champ1 && champ1.regions) { for (const r of champ1.regions) if (card.regions.includes(r)) return r; }
+      if (champ2 && champ2.regions) { for (const r of champ2.regions) if (card.regions.includes(r)) return r; }
+      return card.regions[0];
+    }
+
+    // Pick counter
+    function updatePickCounter() {
+      const el = document.getElementById('pickCounter');
+      if (el) el.textContent = `${deck.length}/40 cards`;
+    }
+
+    // Mana curve bar chart
+    function drawManaCurve(bins) {
+      const canvas = document.getElementById('manaCurveCanvas');
+      if (!canvas) return;
+
+      const labels = ['0','1','2','3','4','5','6','7','8','9+'];
+      const dpr = window.devicePixelRatio || 1;
+
+      const wrapper = document.getElementById('manaCurveWrapper');
+      const cssWidth = (wrapper && wrapper.clientWidth) ? wrapper.clientWidth - 16 : 420;
+      const cssHeight = 220;
+
+      canvas.style.width = cssWidth + 'px';
+      canvas.style.height = cssHeight + 'px';
+      canvas.width = Math.floor(cssWidth * dpr);
+      canvas.height = Math.floor(cssHeight * dpr);
+
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.scale(dpr, dpr);
+
+      const pad = { left: 12, right: 8, top: 8, bottom: 32 };
+      const w = cssWidth;
+      const h = cssHeight;
+      const chartW = w - pad.left - pad.right;
+      const chartH = h - pad.top - pad.bottom;
+
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = '#1f1f1f';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, h - pad.bottom);
+      ctx.lineTo(w - pad.right, h - pad.bottom);
+      ctx.stroke();
+
+      const maxVal = Math.max(1, ...bins);
+      const barCount = bins.length;
+      const slotW = chartW / barCount;
+      const barW = Math.max(8, slotW * 0.6);
+      const gap = slotW - barW;
+
+      ctx.font = '900 12px "Fira Sans Extra Condensed", Arial, sans-serif';
+      ctx.textAlign = 'center';
+
+      for (let i = 0; i < barCount; i++) {
+        const v = bins[i];
+        const x = pad.left + i * slotW + gap / 2;
+        const barH = (v / maxVal) * (chartH - 12);
+        const y = h - pad.bottom - barH;
+
+        ctx.fillStyle = '#00a6fb';
+        ctx.fillRect(x, y, barW, barH);
+        ctx.strokeStyle = '#1f1f1f';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x, y, barW, barH);
+
+        ctx.fillStyle = '#1f1f1f';
+        ctx.textBaseline = 'bottom';
+        if (v > 0) ctx.fillText(String(v), x + barW / 2, y - 2);
+
+        ctx.textBaseline = 'top';
+        ctx.fillText(labels[i], x + barW / 2, h - pad.bottom + 6);
+      }
+    }
+
+    function updateManaCurve() {
+      const bins = new Array(10).fill(0); // 0..8, 9+
+      for (let i = 0; i < deck.length; i++) {
+        const c = deck[i];
+        let cost = Number(getManaCost(c));
+        if (!Number.isFinite(cost) || cost < 0) cost = 0;
+        if (cost >= 9) bins[9] += 1;
+        else bins[cost] += 1;
+      }
+      drawManaCurve(bins);
+    }
+
+  function updateTypeCounters() {
+    const champsEl = document.getElementById('countChampions');
+    const unitsEl = document.getElementById('countUnits');
+    const spellsEl = document.getElementById('countSpells');
+    const landmarksEl = document.getElementById('countLandmarks');
+    const equipmentEl = document.getElementById('countEquipment');
+
+    // If the counters panel isn't present (e.g., on ruleset screen), do nothing
+    if (!champsEl || !unitsEl || !spellsEl || !landmarksEl || !equipmentEl) return;
+
+    let champions = 0, units = 0, spells = 0, landmarks = 0, equipment = 0;
+
+    for (const c of deck) {
+      if (!c) continue;
+      if (c.rarity === 'Champion') champions += 1;
+      else if (c.type === 'Unit') units += 1;
+      else if (c.type === 'Spell') spells += 1;
+      else if (c.type === 'Landmark') landmarks += 1;
+      else if (c.type === 'Equipment') equipment += 1;
+    }
+
+    champsEl.textContent = champions;
+    unitsEl.textContent = units;
+    spellsEl.textContent = spells;
+    landmarksEl.textContent = landmarks;
+    equipmentEl.textContent = equipment;
+
+  }
+
+    function removeOneFromDeck(cardCode) {
+      const idx = deck.findIndex(c => c && c.cardCode === cardCode);
+      if (idx >= 0) {
+        deck.splice(idx, 1);
+        renderDeck();
+        if (getEffectiveRuleset() !== 'SEALED') maybeGenerateDeckCode();
+      }
+    }
+
+    function renderDeck() {
+      const deckList = document.getElementById('deckList');
+      deckList.innerHTML = '';
+      const cardsByName = {};
+      deck.forEach(c => { const key = c.name; if (!cardsByName[key]) cardsByName[key] = { ...c, count: 0 }; cardsByName[key].count += 1; });
+
+      const cardsChampion = [], cardsNonChampion = [];
+      Object.values(cardsByName).forEach(card => { if (card.rarity === "Champion") cardsChampion.push(card); else cardsNonChampion.push(card); });
+      cardsChampion.sort((a, b) => (getManaCost(a) ?? 0) - (getManaCost(b) ?? 0) || a.name.localeCompare(b.name));
+      cardsNonChampion.sort((a, b) => (getManaCost(a) ?? 0) - (getManaCost(b) ?? 0) || a.name.localeCompare(b.name));
+      const cardEntries = cardsChampion.concat(cardsNonChampion);
+
+      cardEntries.forEach(c => {
+        const region = getMostRelevantRegion(c);
+        const iconUrl = REGION_ICONS[region] || "";
+        const regionCell = iconUrl
+          ? `<img class="region-icon" src="${iconUrl}" alt="${region}" title="${region}" onerror="this.onerror=null;this.src='';this.closest('td').innerHTML='<span style='border:1px solid #ccc;padding:4px 8px;border-radius:12px;background:#f6f8fa;color:#333;font-size:13px;'>${region}</span>';">`
+          : `<span style='border:1px solid #ccc;padding:4px 8px;border-radius:12px;background:#f6f8fa;color:#333;font-size:13px;'>${region || ''}</span>`;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="center col-region">${regionCell}</td>
+          <td class="center col-mana">${getManaCost(c)}</td>
+          <td>${c.name}</td>
+          <td class="center col-count" style="font-weight:bold;">${c.count}</td>
+        `;
+        deckList.appendChild(row);
+      });
+
+        // Update counters/charts
+        updatePickCounter();
+        updateManaCurve();
+
+        // NEW: Update type counters whenever the deck changes
+        renderTypeCounters();
+    }
+
+    /* BASIC/CHAOS/Tournament pick flow */
+        function pickCard(card) {
+          const pickedCard = card;
+
+          if (getEffectiveRuleset() === 'CHAOS') {
+            if (getCopiesInDeck(deck, pickedCard.cardCode) >= 3) {
+              setStatus("MAX 3 COPIES REACHED FOR THIS CARD.");
+              return;
+            }
+            deck.push(pickedCard);
+          } else if (isBasicLike()) {
+            // Champions: first two picks, still add 3 copies
+            if (pickNumber === 1) champ1 = pickedCard;
+            if (pickNumber === 2) champ2 = pickedCard;
+
+            updatePreferredRegionPair(champ1, champ2);
+
+            regionLock = updateRegionLock(regionLock, pickNumber, pickedCard, champ1, champ2);
+
+            if (pickNumber === 1 || pickNumber === 2) {
+              for (let i = 0; i < 3; i++) deck.push(pickedCard);
+            } else {
+              // Non-champion: apply 1/2/3-at-a-time
+              const copiesLeft = Math.min(3 - getCopiesInDeck(deck, pickedCard.cardCode), 40 - deck.length);
+              if (copiesLeft <= 0) {
+                setStatus("MAX 3 COPIES REACHED FOR THIS CARD.");
+                return;
+              }
+
+              let toAdd = 1;
+              const effective = getEffectiveRuleset();
+              if (effective === 'BASIC') {
+                if (basicCardsPerPickMode === 'two') toAdd = 2;
+                else if (basicCardsPerPickMode === 'three') toAdd = 3;
+              } else if (effective === 'FEATURED') {
+                toAdd = 2;
+              }
+              toAdd = Math.min(toAdd, copiesLeft);
+
+              for (let i = 0; i < toAdd; i++) deck.push(pickedCard);
+            }
+          } else {
+            // SEALED uses sealed selections
+            return;
+          }
+
+
+      pickNumber += 1;
+      if (deck.length >= 40) pickNumber = -1;
+
+      renderDeck();
+      maybeGenerateDeckCode();
+      getNextDraft();
+    }
+
+        function getNextDraft() {
+      const effective = getEffectiveRuleset();
+
+      if (effective === 'SEALED') {
+        document.getElementById('pickNum').textContent = currentPrompt();
+        return;
+      }
+      if (pickNumber < 0) {
+        document.getElementById('cards').innerHTML = '<div class="status-banner">DECK COMPLETE!</div>';
+        document.getElementById('pickNum').textContent = currentPrompt();
+        return;
+      }
+
+      if (effective === 'FEATURED' && pickNumber === 1) {
+        const pairs = getFeaturedPairChoices();
+        if (!pairs.length) {
+          document.getElementById('cards').innerHTML = '<div class="status-banner">NO FEATURED PAIRS AVAILABLE. RESTART DRAFT.</div>';
+        } else {
+          renderFeaturedPairs(pairs);
+        }
+        document.getElementById('pickNum').textContent = currentPrompt();
+        return;
+      }
+
+      if (effective === 'CHAOS') {
+        const cards = getChaosDraftChoices(deck);
+        renderCards(cards);
+        document.getElementById('pickNum').textContent = currentPrompt();
+        return;
+      }
+
+      // BASIC/FEATURED/Tournament
+      const isBucketedMode = (effective === 'BASIC' && pickNumber >= 3) || (effective === 'FEATURED' && pickNumber >= 3);
+      const bucketSize = getRulesetBucketSize();
+
+      if (isBucketedMode && bucketSize > 1) {
+        // Shrink bucket on final picks: for 3x, last pick should be 3 picks of 1 card each
+        const remaining = 40 - deck.length;
+        const effBucketSize = (bucketSize === 3 && remaining <= 3) ? 1 : Math.max(1, Math.min(bucketSize, remaining));
+        const buckets = getClientDraftBuckets(deck, pickNumber, regionLock, champ1, champ2, effBucketSize);
+        if (buckets.length === 0) {
+          document.getElementById('cards').innerHTML = '<div class="status-banner">NO LEGAL CHOICES. RESTART DRAFT.</div>';
+        } else {
+          renderBuckets(buckets);
+        }
+        document.getElementById('pickNum').textContent = currentPrompt();
+        return;
+      }
+
+      const cards = getClientDraftChoices(deck, pickNumber, regionLock, champ1, champ2);
+      if (cards.length === 0) {
+        document.getElementById('cards').innerHTML = '<div class="status-banner">NO LEGAL CHOICES. RESTART DRAFT.</div>';
+        document.getElementById('pickNum').textContent = currentPrompt();
+        return;
+      }
+      renderCards(cards);
+      document.getElementById('pickNum').textContent = currentPrompt();
+    }
+
+    function restart() {
+      deck = [];
+      pickNumber = 1;
+      champ1 = null;
+      champ2 = null;
+      regionLock = [null, null];
+      preferredRegionPair = null;
+      latestDeckCode = '';
+      setStatus('');
+      document.getElementById('deckCodeRow').style.display = 'none';
+      document.getElementById('deckCodeText').value = '';
+      const tournamentRow = document.getElementById('tournamentCodesRow');
+      if (tournamentRow) tournamentRow.style.display = 'none';
+
+      renderDeck();
+      updatePickCounter();
+      updateManaCurve();
+      renderTypeCounters();
+
+      hideSeedUI();
+
+      // Hide sealed-only controls unless sealed will re-show them
+      document.getElementById('finalizeSealedBtn').style.display = 'none';
+      document.getElementById('openAllPacksBtn').style.display = 'none';
+
+      // Reset sealed state
+      sealedPacks = [];
+      sealedOpened = [];
+      sealedPackRevealOrder = [];
+      sealedRevealCounts = [];
+      sealedPool = [];
+      sealedSelectedUIDs = new Set();
+      sealedUIDToClone = {};
+      sealedNextUID = 1;
+      viewingPackIndex = null;
+      sealedRevealedFlags = [];
+
+      const cardsDiv = document.getElementById('cards');
+      if (cardsDiv) cardsDiv.innerHTML = '';
+
+      if (ruleset === 'BASIC' && draftSeedActive && draftSeedInitial !== null) {
+        setDraftSeed(draftSeedInitial);
+      }
+
+      updateRestartVisibility();
+
+      const effective = getEffectiveRuleset();
+      if (effective === 'SEALED') {
+        startSealedFlow();
+      } else {
+        if (poolLoaded) {
+          getNextDraft();
+        } else if (cardsDiv) {
+          cardsDiv.innerHTML = '<div class="status-banner">LOADING…</div>';
+        }
+      }
+
+      // Update UI to show used region combinations in tournament mode
+      updateTournamentUsedRegionDisplay();
+    }
+
+    function changeRuleset() {
+      // Only visible in non-tournament flows
+      deck = [];
+      pickNumber = 1;
+      champ1 = null;
+      champ2 = null;
+      regionLock = [null, null];
+      preferredRegionPair = null;
+      latestDeckCode = '';
+      tournamentDeckCodes = [];
+      tournamentUsedChampionCodes = new Set();
+      tournamentUsedRegionCombinations = [];
+
+      clearDraftSeed();
+
+      sealedPacks = [];
+      sealedOpened = [];
+      sealedPackRevealOrder = [];
+      sealedRevealCounts = [];
+      sealedPool = [];
+      sealedSelectedUIDs = new Set();
+      sealedUIDToClone = {};
+      sealedNextUID = 1;
+      viewingPackIndex = null;
+      sealedRevealedFlags = [];
+
+      document.getElementById('finalizeSealedBtn').style.display = 'none';
+      document.getElementById('openAllPacksBtn').style.display = 'none';
+
+      setStatus('');
+      document.getElementById('deckCodeRow').style.display = 'none';
+      document.getElementById('deckCodeText').value = '';
+      const tournamentRow = document.getElementById('tournamentCodesRow');
+      if (tournamentRow) tournamentRow.style.display = 'none';
+
+      hideSeedUI();
+      const cardsDiv = document.getElementById('cards');
+      if (cardsDiv) cardsDiv.innerHTML = '';
+      renderDeck();
+      updatePickCounter();
+      updateManaCurve();
+
+      document.getElementById('appContainer').style.display = 'none';
+      document.getElementById('rulesetStep').style.display = 'flex';
+      appReady = false;
+
+      updateRestartVisibility();
+
+      const discordLink = document.getElementById('discordLink');
+      if (discordLink) discordLink.style.display = 'inline-block';
+    }
+
+    function maybeGenerateDeckCode() {
+      if (getEffectiveRuleset() === 'SEALED') return; // Sealed generates on finalize only
+      if (deck.length === 40) {
+        setStatus("GENERATING DECK CODE...");
+        google.script.run.withSuccessHandler(handleDeckCode).getDeckCodeFromDeck_STRICT(deck);
+
+        if (ruleset === 'BASIC') {
+          const genSeedBtn = document.getElementById('generateSeedBtn');
+          if (genSeedBtn) genSeedBtn.style.display = 'inline-block';
+        }
+      }
+    }
+    function handleDeckCode(code) {
+      latestDeckCode = code || '';
+      const row = document.getElementById('deckCodeRow');
+      const input = document.getElementById('deckCodeText');
+      if (latestDeckCode) {
+        input.value = latestDeckCode;
+        row.style.display = 'flex';
+        setStatus("DECK CODE GENERATED");
+        if (ruleset === 'TOURNAMENT') {
+          // Lock tournament champions so they can't be drafted again in later decks
+          const champsInDeck = deck.filter(c => c?.rarity === 'Champion');
+          champsInDeck.forEach(c => {
+            if (c?.cardCode) tournamentUsedChampionCodes.add(c.cardCode);
+          });
+
+          // NEW: Track region combination for this deck (use final regionLock)
+          if (regionLock[0] && regionLock[1]) {
+            // regionLock contains the actual finalized regions
+            const r1 = typeof regionLock[0] === 'string' ? regionLock[0] : null;
+            const r2 = typeof regionLock[1] === 'string' ? regionLock[1] : null;
+            
+            if (r1 && r2) {
+              addUsedRegionCombination(r1, r2);
+            }
+          }
+
+          tournamentDeckCodes.push(latestDeckCode);
+
+          if (tournamentDeckCodes.length < TOURNAMENT_DECK_TARGET) {
+            setStatus(`DECK ${tournamentDeckCodes.length} COMPLETE. START NEXT DECK.`);
+            updateTournamentUsedRegionDisplay(); // NEW: Show used combinations before restarting
+            restart();
+            return;
+          }
+
+          updateTournamentUsedRegionDisplay(); // NEW: Show used combinations before restarting
+
+          showTournamentCodes(tournamentDeckCodes);
+          setStatus("ALL TOURNAMENT DECK CODES GENERATED");
+
+          google.script.run.appendTournamentEntryDetailed(
+            tUsername || "",
+            tRiotId || "",
+            tDiscordId || "",
+            tournamentDeckCodes[0] || "",
+            tournamentDeckCodes[1] || "",
+            tournamentDeckCodes[2] || "",
+          );
+          setStatus("DECK CODES SUBMITTED!");
+        }
+      } else {
+        row.style.display = 'none';
+        input.value = '';
+        setStatus("FAILED TO GENERATE DECK CODE");
+      }
+    }
+    async function copyDeckCode() {
+      const text = (latestDeckCode || '').trim();
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        setStatus("DECK CODE COPIED TO CLIPBOARD");
+      } catch (e) {
+        try {
+          const input = document.getElementById('deckCodeText');
+          input.select();
+          document.execCommand('copy');
+          window.getSelection().removeAllRanges?.();
+          setStatus("DECK CODE COPIED TO CLIPBOARD");
+        } catch (e2) {
+          setStatus("UNABLE TO COPY. PLEASE SELECT AND COPY MANUALLY");
+        }
+      }
+    }
+
+    /* ---------------- Sealed flow (packs and reveal) ---------------- */
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+    function cloneWithUID(orig) {
+      const uid = 'u' + (sealedNextUID++);
+      const clone = { ...orig, _uid: uid };
+      sealedUIDToClone[uid] = clone;
+      return clone;
+    }
+
+    function startSealedFlow() {
+      document.getElementById('finalizeSealedBtn').style.display = 'inline-block';
+      document.getElementById('openAllPacksBtn').style.display = 'inline-block';
+      const cardsDiv = document.getElementById('cards');
+
+      if (!poolLoaded) {
+        if (cardsDiv) cardsDiv.innerHTML = '<div class="status-banner">LOADING…</div>';
+        return;
+      }
+      buildSealedPacks();
+      renderSealedPacks();
+      document.getElementById('pickNum').textContent = currentPrompt();
+    }
+
+    // Build 8 packs, each ordered by rarity: 7 Common, 4 Rare, 2 Epic, 1 Champion (Champion last in reveal order)
+    function buildSealedPacks() {
+      sealedPacks = [];
+      sealedOpened = [];
+      sealedPackRevealOrder = [];
+      sealedRevealCounts = [];
+      sealedPool = [];
+      sealedSelectedUIDs = new Set();
+      sealedUIDToClone = {};
+      sealedNextUID = 1;
+      sealedRevealedFlags = [];
+
+      const commons = (cardPool || []).filter(c => c && c.rarity === 'Common');
+      const rares = (cardPool || []).filter(c => c && c.rarity === 'Rare');
+      const epics = (cardPool || []).filter(c => c && c.rarity === 'Epic');
+      const champs = (cardPool || []).filter(c => c && c.rarity === 'Champion');
+
+      function draw(list, n) {
+        const out = [];
+        for (let i = 0; i < n; i++) {
+          const src = (list && list.length) ? list : (cardPool || []);
+          if (!src.length) break;
+          const idx = Math.floor(rand() * src.length);
+          out.push(cloneWithUID(src[idx]));
+        }
+        return out;
+      }
+
+      for (let p = 0; p < 8; p++) {
+        // Compose pack in ordered rarity
+        const packCommons = draw(commons, 7);
+        const packRares = draw(rares, 4);
+        const packEpics = draw(epics, 2);
+
+        let packChamp = draw(champs, 1);
+        if (!packChamp.length) {
+          // Fallback if no champion present in pool
+          packChamp = draw(epics.length ? epics : (rares.length ? rares : commons), 1);
+        }
+
+        const packOrdered = [...packCommons, ...packRares, ...packEpics, ...packChamp]; // Champion last
+        sealedPacks.push(packOrdered);
+        sealedOpened.push(false);
+        sealedPackRevealOrder.push(packOrdered.map(c => c._uid)); // reveal in this order
+        sealedRevealCounts.push(0);
+
+        sealedRevealedFlags.push(new Array(packOrdered.length).fill(false));
+      }
+    }
+
+    function renderSealedPacks() {
+      const cardsDiv = document.getElementById('cards');
+      cardsDiv.className = 'card-group';
+      cardsDiv.innerHTML = '';
+      // Show 8 pack tiles
+      sealedPacks.forEach((pack, i) => {
+        const tile = document.createElement('div');
+        tile.className = 'sealed-pack' + (sealedOpened[i] ? ' opened' : '');
+        tile.innerHTML = `
+          <div style="font-weight:900;">PACK ${i+1}</div>
+          <div style="margin-top:6px;color:#333;">${sealedOpened[i] ? 'OPENED' : 'CLICK TO OPEN'}</div>
+        `;
+        tile.onclick = () => renderSealedPackReveal(i);
+        cardsDiv.appendChild(tile);
+      });
+    }
+
+   function renderSealedPackReveal(i) {
+      viewingPackIndex = i;
+      const cardsDiv = document.getElementById('cards');
+      cardsDiv.innerHTML = '';
+
+      const controls = document.createElement('div');
+      controls.className = 'sealed-reveal-controls';
+
+      const btnRevealAll = document.createElement('button');
+      btnRevealAll.textContent = 'REVEAL ALL';
+      btnRevealAll.onclick = () => revealAllInPack(i);
+
+      // NEW: Next Pack (wraps around)
+      const btnNextPack = document.createElement('button');
+      btnNextPack.textContent = 'NEXT PACK';
+      btnNextPack.onclick = () => renderSealedPackReveal((i + 1) % sealedPacks.length);
+
+      const btnBack = document.createElement('button');
+      btnBack.textContent = 'BACK TO PACKS';
+      btnBack.onclick = () => renderSealedPacks();
+
+      // NEW: Move Open All Packs here (to the right of Back)
+      const btnOpenAll = document.createElement('button');
+      btnOpenAll.textContent = 'OPEN ALL PACKS';
+      btnOpenAll.onclick = () => openAllSealedPacks();
+
+      // Order: Reveal All | Next Pack | Back to Packs | Open All Packs
+      controls.appendChild(btnRevealAll);
+      controls.appendChild(btnNextPack);
+      controls.appendChild(btnBack);
+      controls.appendChild(btnOpenAll);
+      cardsDiv.appendChild(controls);
+
+      const grid = document.createElement('div');
+      grid.className = 'sealed-reveal-grid';
+
+      const pack = sealedPacks[i];
+      if (!sealedRevealedFlags[i] || sealedRevealedFlags[i].length !== pack.length) {
+       sealedRevealedFlags[i] = new Array(pack.length).fill(false); // NEW guard
+      }
+      const flags = sealedRevealedFlags[i] || [];
+
+      for (let idx = 0; idx < pack.length; idx++) {
+        if (flags[idx]) {
+          const uid = sealedPackRevealOrder[i][idx];
+          const clone = sealedUIDToClone[uid];
+          const isChamp = (clone && clone.rarity === 'Champion');
+
+          const tile = document.createElement('div');
+          tile.className = 'sealed-card' + (isChamp ? ' champion-bg' : '') + (sealedSelectedUIDs.has(uid) ? ' selected' : '');
+          tile.innerHTML = `
+            <img src="${clone.imageUrl}" alt="${clone.name}">
+            <span class="name">${clone.name}</span>
+            <span class="rarity">${clone.rarity || ''}</span>
+          `;
+          tile.onclick = () => toggleSealedSelection(uid);
+          grid.appendChild(tile);
+        } else {
+          // Hidden tile: same wrapper for consistent size; click reveals THIS index
+          const phTile = document.createElement('div');
+          phTile.className = 'sealed-card';
+          phTile.innerHTML = `<div class="sealed-placeholder">HIDDEN</div>`;
+          phTile.onclick = () => revealSpecificInPack(i, idx);
+          grid.appendChild(phTile);
+        }
+      }
+
+      cardsDiv.appendChild(grid);
+      document.getElementById('pickNum').textContent = currentPrompt();
+    }
+    function revealSpecificInPack(i, tileIdx) {
+      const flags = sealedRevealedFlags[i];
+      if (!flags || flags[tileIdx]) return; // already revealed or invalid
+
+      flags[tileIdx] = true;
+
+      // Keep counters/opened state in sync for existing code paths
+      sealedRevealCounts[i] = flags.filter(Boolean).length;
+      if (sealedRevealCounts[i] === sealedPacks[i].length) {
+        sealedOpened[i] = true;
+      }
+
+      renderSealedPackReveal(i);
+    }
+
+    function revealNextInPack(i) {
+      const flags = sealedRevealedFlags[i] || [];
+      for (let k = 0; k < flags.length; k++) {
+        if (!flags[k]) { flags[k] = true; break; }
+      }
+      sealedRevealCounts[i] = flags.filter(Boolean).length;
+      if (sealedRevealCounts[i] === sealedPacks[i].length) sealedOpened[i] = true;
+      renderSealedPackReveal(i);
+    }
+
+    function revealAllInPack(i) {
+      const len = sealedPacks[i]?.length || 0;
+      sealedRevealedFlags[i] = new Array(len).fill(true);
+      sealedRevealCounts[i] = len;
+      sealedOpened[i] = true;
+      renderSealedPackReveal(i);
+    }
+
+    function openAllSealedPacks() {
+      sealedPool = [];
+      for (let p = 0; p < sealedPacks.length; p++) {
+        sealedPool.push(...sealedPacks[p]);
+        sealedOpened[p] = true;
+        sealedRevealCounts[p] = sealedPacks[p].length;
+        // NEW: mark all revealed for this pack
+        sealedRevealedFlags[p] = new Array(sealedPacks[p].length).fill(true);
+      }
+      renderSealedPoolGrid();
+      document.getElementById('pickNum').textContent = currentPrompt();
+    }
+
+    function renderSealedPoolGrid() {
+      const cardsDiv = document.getElementById('cards');
+      cardsDiv.innerHTML = '';
+      const grid = document.createElement('div');
+      grid.className = 'sealed-grid';
+      sealedPool.forEach(clone => {
+        const uid = clone._uid;
+        const isChamp = (clone && clone.rarity === 'Champion');
+        const tile = document.createElement('div');
+        tile.className = 'sealed-card' + (isChamp ? ' champion-bg' : '') + (sealedSelectedUIDs.has(uid) ? ' selected' : '');
+        tile.innerHTML = `
+          <img src="${clone.imageUrl}" alt="${clone.name}">
+          <span class="name">${clone.name}</span>
+          <span class="rarity">${clone.rarity || ''}</span>
+        `;
+        tile.onclick = () => toggleSealedSelection(uid);
+        grid.appendChild(tile);
+      });
+      cardsDiv.appendChild(grid);
+    }
+
+    function toggleSealedSelection(uid) {
+      const clone = sealedUIDToClone[uid];
+      if (!clone) return;
+      const already = sealedSelectedUIDs.has(uid);
+      if (already) {
+        // Unselect: remove one occurrence from deck matching this clone's code
+        const idx = deck.findIndex(c => c && c.cardCode === clone.cardCode);
+        if (idx >= 0) deck.splice(idx, 1);
+        sealedSelectedUIDs.delete(uid);
+      } else {
+        // Select: enforce 40 cards and max 3 copies
+        if (deck.length >= 40) { setStatus("DECK ALREADY HAS 40 CARDS."); return; }
+        if (getCopiesInDeck(deck, clone.cardCode) >= 3) { setStatus("MAX 3 COPIES REACHED FOR THIS CARD."); return; }
+        deck.push(clone);
+        sealedSelectedUIDs.add(uid);
+      }
+      // Update visuals in whichever view we're on
+      const cardsDiv = document.getElementById('cards');
+      if (viewingPackIndex != null && !sealedPool.length) {
+        renderSealedPackReveal(viewingPackIndex);
+      } else {
+        renderSealedPoolGrid();
+      }
+      renderDeck();
+      // Sealed does not auto-generate; finalize button handles it
+    }
+
+    function finalizeSealedDeck() {
+      if (getEffectiveRuleset() !== 'SEALED') return;
+      if (deck.length !== 40) {
+        setStatus("SELECT EXACTLY 40 CARDS BEFORE FINALIZING.");
+        return;
+      }
+      setStatus("GENERATING DECK CODE...");
+      google.script.run.withSuccessHandler(handleDeckCode).getDeckCodeFromDeck_STRICT(deck);
+    }
+
+    // Ensure pool prefetch kicks off on load:
+    document.addEventListener('DOMContentLoaded', () => {
+      try { loadCardPoolAndStartDraft(); } catch (e) {}
+      const discordLink = document.getElementById('discordLink');
+      if (discordLink) discordLink.style.display = 'inline-block';
+      updateRestartVisibility();
+    });
+
+    const REGION_URL_TO_NAME = (() => {
+  const map = {};
+  for (const [name, url] of Object.entries(REGION_ICONS)) {
+    map[url] = name;
+  }
+  return map;
+})();
+
+/**
+ * Compute region counts by reading what's currently rendered in the deck table.
+ * It looks for rows in #deckList and reads:
+ * - Region from the first cell's <img class="region-icon"> alt attribute or URL
+ * - Count from the fourth cell (or td.col-count) text
+ */
+function computeRegionCountsFromTable() {
+  const counts = {};
+  const tbody = document.getElementById('deckList');
+  if (!tbody) return counts;
+
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  rows.forEach(row => {
+    // Find region image in the first cell
+    const img = row.querySelector('img.region-icon');
+    let region = img?.getAttribute('alt')?.trim();
+
+    if (!region && img?.src) {
+      // Try to resolve region via URL match (exact match or endsWith)
+      const src = img.src;
+      // First try exact map
+      region = REGION_URL_TO_NAME[src];
+      if (!region) {
+        // Try endsWith match for robustness
+        for (const [name, url] of Object.entries(REGION_ICONS)) {
+          if (src.endsWith(url.split('/').pop())) {
+            region = name;
+            break;
+          }
+        }
+      }
+    }
+
+    // Read count (fourth cell or td.col-count)
+    let countCell = row.querySelector('td.col-count');
+    if (!countCell) {
+      const tds = row.querySelectorAll('td');
+      countCell = tds[3] || null;
+    }
+    const count = parseInt(countCell?.textContent?.trim() || '1', 10) || 1;
+
+    if (region) {
+      counts[region] = (counts[region] || 0) + count;
+    }
+  });
+
+  return counts;
+}
+
+/**
+ * Render the counters into #regionCounters using REGION_ICONS for images
+ * Format: [icon] x <count>
+ */
+function renderRegionCounters() {
+  const container = document.getElementById('regionCounters');
+  if (!container) return;
+
+  const counts = computeRegionCountsFromTable();
+
+  // Build tiles for each region with count > 0
+  const tiles = Object.entries(counts)
+    .filter(([_, c]) => c > 0)
+    .map(([region, c]) => {
+      const url = REGION_ICONS[region];
+      const safeRegion = region.replace(/"/g, '&quot;');
+      return `
+        <div class="region-counter" title="${safeRegion}">
+          ${url ? `<img src="${url}" alt="${safeRegion}">` : `<span>${safeRegion}</span>`}
+          <span class="count">x ${c}</span>
+        </div>
+      `.trim();
+    });
+
+  container.innerHTML = tiles.join('');
+}
+
+/**
+ * Keep counters updated automatically whenever the deck table changes.
+ * This uses a MutationObserver on #deckList.
+ */
+function setupRegionCountersObserver() {
+  const tbody = document.getElementById('deckList');
+  if (!tbody) return;
+
+  // Initial render
+  renderRegionCounters();
+
+  const obs = new MutationObserver(() => {
+    renderRegionCounters();
+  });
+
+  obs.observe(tbody, { childList: true, subtree: true, characterData: true });
+  // Recompute on window resize too (optional)
+  window.addEventListener('resize', renderRegionCounters);
+}
+
+// Ensure the observer is set up once the DOM is ready
+document.addEventListener('DOMContentLoaded', setupRegionCountersObserver);
+
+// Also update when ruleset changes, if your code calls selectRuleset()
+const _origSelectRuleset = typeof selectRuleset === 'function' ? selectRuleset : null;
+if (_origSelectRuleset) {
+  window.selectRuleset = function(mode) {
+    _origSelectRuleset(mode);
+    // Re-render after mode switch
+    renderRegionCounters();
+  };
+}
+
+// If your code programmatically rebuilds the deck table elsewhere
+// you can call renderRegionCounters() after that operation as well.
+  </script>
+</body>
+</html>
