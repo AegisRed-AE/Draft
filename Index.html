@@ -992,6 +992,10 @@ align-items: center;
       
       if (appContainer) appContainer.style.display = 'none';
       if (redraftStep) redraftStep.style.display = 'flex';
+
+      // Hide the tournament codes row (in case showTournamentCodes was called)
+      const tournamentCodesRow = document.getElementById('tournamentCodesRow');
+      if (tournamentCodesRow) tournamentCodesRow.style.display = 'none';
       
       // Populate the deck selection with the 3 completed decks
       const deckSelection = document.getElementById('redraftDeckSelection');
