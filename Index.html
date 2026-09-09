@@ -446,7 +446,7 @@
   margin-bottom: 2px;       /* tighter label spacing */
 }
 
-<!-- Add this CSS for the redraft UI (add to the <style> section around line 430) -->
+
 
 /* Redraft/completion screen */
 #tournamentRedraftScreen {
@@ -2805,18 +2805,9 @@ align-items: center;
 
           updateTournamentUsedRegionDisplay(); // NEW: Show used combinations before restarting
 
-          showTournamentCodes(tournamentDeckCodes);
-          setStatus("ALL TOURNAMENT DECK CODES GENERATED");
-
-          google.script.run.appendTournamentEntryDetailed(
-            tUsername || "",
-            tRiotId || "",
-            tDiscordId || "",
-            tournamentDeckCodes[0] || "",
-            tournamentDeckCodes[1] || "",
-            tournamentDeckCodes[2] || "",
-          );
-          setStatus("DECK CODES SUBMITTED!");
+           // NEW: Show redraft confirmation screen instead of immediately submitting
+          showRedraftConfirmation();
+          setStatus("ALL DECKS COMPLETE. SELECT A DECK TO REDRAFT OR SUBMIT AS IS.");;
         }
       } else {
         row.style.display = 'none';
