@@ -1065,8 +1065,9 @@ align-items: center;
       if (redraftStep) redraftStep.style.display = 'none';
       if (appContainer) appContainer.style.display = 'flex';
       
-      // Restart the card pool for this deck
+      // Restart the card pool and start drafting
       loadCardPool();
+      getNextDraft();
     }
 
     // Finalize tournament without redrafting
@@ -1080,6 +1081,17 @@ align-items: center;
       // Show the app container with the final codes
       const appContainer = document.getElementById('appContainer');
       if (appContainer) appContainer.style.display = 'flex';
+      
+      // Submit to Google Sheets
+      google.script.run.appendTournamentEntryDetailed(
+        tUsername || "",
+        tRiotId || "",
+        tDiscordId || "",
+        tournamentDeckCodes[0] || "",
+        tournamentDeckCodes[1] || "",
+        tournamentDeckCodes[2] || "",
+      );
+      setStatus("DECK CODES SUBMITTED!");
     }
 
     // Basic options (NEW)
