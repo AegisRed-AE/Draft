@@ -984,6 +984,100 @@ align-items: center;
       });
     }
 
+    // Show the redraft confirmation screen after 3 decks are complete
+    function showRedraftConfirmation() {
+      // Hide the app and show the redraft screen
+      const appContainer = document.getElementById('appContainer');
+      const redraftStep = document.getElementById('redraftConfirmStep');
+      
+      if (appContainer) appContainer.style.display = 'none';
+      if (redraftStep) redraftStep.style.display = 'flex';
+      
+      // Populate the deck selection with the 3 completed decks
+      const deckSelection = document.getElementById('redraftDeckSelection');
+      if (!deckSelection) return;
+      
+      deckSelection.innerHTML = '';
+      
+      // Create a card for each of the 3 decks
+      for (let i = 0; i < 3; i++) {
+        const pair = tournamentUsedRegionCombinations[i];
+        if (!pair) continue;
+        
+        const [r1, r2] = pair.split('|');
+        const iconUrl1 = REGION_ICONS[r1] || "";
+        const iconUrl2 = REGION_ICONS[r2] || "";
+        
+        const img1Html = iconUrl1 
+          ? `<img src="${iconUrl1}" alt="${r1}" title="${r1}" onerror="this.onerror=null;this.style.display='none';">`
+          : `<span style="color:#999;font-size:10px;">${r1.substring(0,2)}</span>`;
+        const img2Html = iconUrl2 
+          ? `<img src="${iconUrl2}" alt="${r2}" title="${r2}" onerror="this.onerror=null;this.style.display='none';">`
+          : `<span style="color:#999;font-size:10px;">${r2.substring(0,2)}</span>`;
+        
+        const deckCard = document.createElement('div');
+        deckCard.style.cssText = 'background: #f9f9f9; border: 2.5px solid #1f1f1f; border-radius: 12px; padding: 16px; min-width: 280px; text-align: center;';
+        deckCard.innerHTML = `
+          <div style="font-weight: 900; color: #1f1f1f; font-size: 1.5em; margin-bottom: 10px;">DECK ${i + 1}</div>
+          <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; align-items: center;">
+            <div style="width: 44px; height: 44px; border: 2.5px solid #1f1f1f; border-radius: 6px; display: flex; align-items: center; justify-content: center;">${img1Html}</div>
+            <div style="font-weight: 900; color: #1f1f1f; font-size: 1.2em;">+</div>
+            <div style="width: 44px; height: 44px; border: 2.5px solid #1f1f1f; border-radius: 6px; display: flex; align-items: center; justify-content: center;">${img2Html}</div>
+          </div>
+          <button onclick="startRedraft(${i})" style="padding: 12px 20px; border: 2.5px solid #b00020 !important; background: #fff; color: #b00020; border-radius: 8px; cursor: pointer; font-weight: 900; letter-spacing: 0.5px; transition: background 0.15s, color 0.15s; text-transform: uppercase; font-family: 'Fira Sans Extra Condensed', Arial, sans-serif; margin-top: 10px; width: 100%;">REDRAFT THIS DECK</button>
+        `;
+        deckSelection.appendChild(deckCard);
+      }
+    }
+
+    // Start redrafting a specific deck
+    function startRedraft(deckIndex) {
+      redraftInProgress = true;
+      redraftDeckIndex = deckIndex;
+      redraftAllowed = false; // After redraft, no more redrafting allowed
+      
+      // Store the regions that will be used for this redraft
+      const pair = tournamentUsedRegionCombinations[deckIndex];
+      if (pair) {
+        const [r1, r2] = pair.split('|');
+        redraftOriginalRegions = [r1, r2];
+      }
+      
+      // Remove the redrafted deck from our tracking
+      tournamentDeckCodes.splice(deckIndex, 1);
+      tournamentUsedRegionCombinations.splice(deckIndex, 1);
+      
+      // Reset deck for new draft
+      deck = [];
+      pickNumber = 1;
+      champ1 = null;
+      champ2 = null;
+      regionLock = [null, null];
+      
+      // Go back to drafting
+      const redraftStep = document.getElementById('redraftConfirmStep');
+      const appContainer = document.getElementById('appContainer');
+      
+      if (redraftStep) redraftStep.style.display = 'none';
+      if (appContainer) appContainer.style.display = 'flex';
+      
+      // Restart the card pool for this deck
+      loadCardPool();
+    }
+
+    // Finalize tournament without redrafting
+    function finalizeTournamentWithoutRedraft() {
+      // Tournament is done - show the codes
+      const redraftStep = document.getElementById('redraftConfirmStep');
+      if (redraftStep) redraftStep.style.display = 'none';
+      
+      showTournamentCodes(tournamentDeckCodes);
+      
+      // Show the app container with the final codes
+      const appContainer = document.getElementById('appContainer');
+      if (appContainer) appContainer.style.display = 'flex';
+    }
+
     // Basic options (NEW)
     let basicFormatMode = 'eternal';        // 'standard' | 'eternal'
     let basicCardsPerPickMode = 'one';      // 'one' | 'custom'
