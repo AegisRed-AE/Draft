@@ -445,6 +445,123 @@
 .tournament-form label {
   margin-bottom: 2px;       /* tighter label spacing */
 }
+
+<!-- Add this CSS for the redraft UI (add to the <style> section around line 430) -->
+
+/* Redraft/completion screen */
+#tournamentRedraftScreen {
+display: none;
+align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.redraft-card {
+  background: #fff;
+  border: 2.5px solid #1f1f1f !important;
+  border-radius: 18px;
+  padding: 28px 24px;
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 18px rgba(0,0,0,0.12);
+}
+
+.redraft-title {
+  color: #1f1f1f;
+  font-family: 'Lulo Clean One Bold', 'Lulo Clean One', 'Bebas Neue', 'Fira Sans Extra Condensed', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 2.2em;
+  letter-spacing: 0.5px;
+  margin: 0 0 20px 0;
+}
+
+.redraft-deck-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.redraft-deck-card {
+  background: #f9f9f9;
+  border: 2.5px solid #1f1f1f !important;
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 280px;
+  text-align: center;
+}
+
+.redraft-deck-number {
+  font-weight: 900;
+  color: #1f1f1f;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.redraft-deck-regions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.redraft-region-icon {
+  width: 44px;
+  height: 44px;
+  border: 2.5px solid #1f1f1f;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.redraft-region-icon img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.redraft-plus {
+  font-weight: 900;
+  color: #1f1f1f;
+  font-size: 1.2em;
+}
+
+.redraft-btn {
+  padding: 12px 20px;
+  border: 2.5px solid #b00020 !important;
+  background: #fff;
+  color: #b00020;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  transition: background 0.15s, color 0.15s;
+  text-transform: uppercase;
+  font-family: 'Fira Sans Extra Condensed', Arial, sans-serif;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.redraft-btn:hover {
+  background: #b00020;
+  color: #fff;
+}
+
+.redraft-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
 /* Basic Options step (NEW) */
 #basicOptionsStep {
   display: none;
@@ -643,6 +760,22 @@
     </div>
   </div>
 
+  <!-- Redraft Confirmation Screen (NEW) -->
+  <div id="redraftConfirmStep" style="display: none; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; box-sizing: border-box;">
+    <div class="tournament-card">
+      <div class="tournament-title">REDRAFT ONE DECK</div>
+      <div style="font-weight:900; color:#1f1f1f; margin-bottom: 16px;">SELECT A DECK TO REDRAFT</div>
+      
+      <div id="redraftDeckSelection" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+        <!-- Deck selection buttons will be populated here -->
+      </div>
+      
+      <div class="tournament-actions">
+        <button onclick="finalizeTournamentWithoutRedraft()">SUBMIT AS IS</button>
+      </div>
+    </div>
+  </div>
+
   <!-- App UI -->
   <div id="appContainer" class="container" style="display:none;">
     <div class="left-panel">
@@ -761,6 +894,11 @@
     // Tournament ruleset + multi-deck submission
     const TOURNAMENT_RULESET = 'BASIC'; // BASIC | CHAOS | SEALED | FEATURED
     const TOURNAMENT_DECK_TARGET = 3;
+    // Redraft functionality
+    let redraftAllowed = true;         // Can only redraft once
+    let redraftInProgress = false;     // Currently redrafting
+    let redraftDeckIndex = null;       // Which deck (0, 1, or 2) is being redrafted
+    let redraftOriginalRegions = null; // Store the original region pair
     let tournamentDeckCodes = [];
     let tournamentUsedChampionCodes = new Set();
     let tournamentUsedRegionCombinations = []; // Array of normalized region pairs like "Freljord|Noxus"
